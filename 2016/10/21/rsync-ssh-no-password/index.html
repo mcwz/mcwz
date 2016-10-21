@@ -84,19 +84,16 @@
 
 
 
-<meta name="description" content="最近要热备一个运行了接近10年的图片库程序，这个WEB程序在10年间已经积累了接近4T的文件，文件数量达百万个以上，想达到热备，决定采用inotify+rsync来完成文件的热备。在热备的过程中发现，启动rsync后，计算文件差异严重影响了现有程序的运行，因此后来决定，rsync只负责同步正在变化的文件，之前的文件统一用其他方式拷贝。
-rsync遇到的问题rsync 常见的几种同步方式有以下几种">
+<meta name="description" content="最近要热备一个运行了接近10年的图片库程序，这个WEB程序在10年间已经积累了接近4T的文件，文件数量达百万个以上，想达到热备，决定采用inotify+rsync来完成文件的热备。在热备的过程中发现，启动rsync后，计算文件差异严重影响了现有程序的运行，因此后来决定，rsync只负责同步正在变化的文件，之前的文件统一用其他方式拷贝。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="rsync ssh no password">
 <meta property="og:url" content="http://sheldong.space/2016/10/21/rsync-ssh-no-password/index.html">
 <meta property="og:site_name" content="飞翔猴子">
-<meta property="og:description" content="最近要热备一个运行了接近10年的图片库程序，这个WEB程序在10年间已经积累了接近4T的文件，文件数量达百万个以上，想达到热备，决定采用inotify+rsync来完成文件的热备。在热备的过程中发现，启动rsync后，计算文件差异严重影响了现有程序的运行，因此后来决定，rsync只负责同步正在变化的文件，之前的文件统一用其他方式拷贝。
-rsync遇到的问题rsync 常见的几种同步方式有以下几种">
-<meta property="og:updated_time" content="2016-10-21T03:15:29.626Z">
+<meta property="og:description" content="最近要热备一个运行了接近10年的图片库程序，这个WEB程序在10年间已经积累了接近4T的文件，文件数量达百万个以上，想达到热备，决定采用inotify+rsync来完成文件的热备。在热备的过程中发现，启动rsync后，计算文件差异严重影响了现有程序的运行，因此后来决定，rsync只负责同步正在变化的文件，之前的文件统一用其他方式拷贝。">
+<meta property="og:updated_time" content="2016-10-21T03:23:26.292Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="rsync ssh no password">
-<meta name="twitter:description" content="最近要热备一个运行了接近10年的图片库程序，这个WEB程序在10年间已经积累了接近4T的文件，文件数量达百万个以上，想达到热备，决定采用inotify+rsync来完成文件的热备。在热备的过程中发现，启动rsync后，计算文件差异严重影响了现有程序的运行，因此后来决定，rsync只负责同步正在变化的文件，之前的文件统一用其他方式拷贝。
-rsync遇到的问题rsync 常见的几种同步方式有以下几种">
+<meta name="twitter:description" content="最近要热备一个运行了接近10年的图片库程序，这个WEB程序在10年间已经积累了接近4T的文件，文件数量达百万个以上，想达到热备，决定采用inotify+rsync来完成文件的热备。在热备的过程中发现，启动rsync后，计算文件差异严重影响了现有程序的运行，因此后来决定，rsync只负责同步正在变化的文件，之前的文件统一用其他方式拷贝。">
 
 
 
@@ -336,6 +333,7 @@ rsync遇到的问题rsync 常见的几种同步方式有以下几种">
 
       
         <p>最近要热备一个运行了接近10年的图片库程序，这个WEB程序在10年间已经积累了接近4T的文件，文件数量达百万个以上，想达到热备，决定采用inotify+rsync来完成文件的热备。在热备的过程中发现，启动rsync后，计算文件差异严重影响了现有程序的运行，因此后来决定，rsync只负责同步正在变化的文件，之前的文件统一用其他方式拷贝。</p>
+<a id="more"></a>
 <h2 id="rsync遇到的问题"><a href="#rsync遇到的问题" class="headerlink" title="rsync遇到的问题"></a>rsync遇到的问题</h2><p>rsync 常见的几种同步方式有以下几种</p>
 <ul>
 <li>rsync [OPTION]… SRC DEST </li>
