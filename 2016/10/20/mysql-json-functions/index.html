@@ -1,0 +1,989 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="MySQL,JSON,function,方法" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="新项目要设置一个可以动态添加各种字段的属性，一直不想直接以修改数据表列的形式来实现，不仅不优雅，而且如果项目中的每个元素需要增加的属性数量不一致或者是完全南辕北辙的话，那么表就完全乱了。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL 5.7 新增加的JSON特性对应的json方法">
+<meta property="og:url" content="http://sheldong.space/2016/10/20/mysql-json-functions/index.html">
+<meta property="og:site_name" content="飞翔猴子">
+<meta property="og:description" content="新项目要设置一个可以动态添加各种字段的属性，一直不想直接以修改数据表列的形式来实现，不仅不优雅，而且如果项目中的每个元素需要增加的属性数量不一致或者是完全南辕北辙的话，那么表就完全乱了。">
+<meta property="og:updated_time" content="2016-10-21T02:05:26.082Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MySQL 5.7 新增加的JSON特性对应的json方法">
+<meta name="twitter:description" content="新项目要设置一个可以动态添加各种字段的属性，一直不想直接以修改数据表列的形式来实现，不仅不优雅，而且如果项目中的每个元素需要增加的属性数量不一致或者是完全南辕北辙的话，那么表就完全乱了。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '6343723486652925000',
+      author: 'sheld'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://sheldong.space/2016/10/20/mysql-json-functions/"/>
+
+
+  <title> MySQL 5.7 新增加的JSON特性对应的json方法 | 飞翔猴子 </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?10269c66480f98f6f5f7819650322416";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">飞翔猴子</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule" rel="section">
+            
+            日程
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                MySQL 5.7 新增加的JSON特性对应的json方法
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-10-20T14:12:42+08:00" content="2016-10-20">
+              2016-10-20
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/10/20/mysql-json-functions/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/20/mysql-json-functions/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/10/20/mysql-json-functions/" class="leancloud_visitors" data-flag-title="MySQL 5.7 新增加的JSON特性对应的json方法">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>新项目要设置一个可以动态添加各种字段的属性，一直不想直接以修改数据表列的形式来实现，不仅不优雅，而且如果项目中的每个元素需要增加的属性数量不一致或者是完全南辕北辙的话，那么表就完全乱了。</p>
+<a id="more"></a>
+<p>于是想到了以前的一个项目是靠着横纵表的形式实现的，就是把不确定的每个属性转成一行行的记录，这样就相当于把数据表中不确定的列转成了一行行的记录，这么做的话，每个元素多几个属性少几个属性，无非也就是记录行数的差异，完全不影响了。但是这种方式有个弊端就是在查询的时候很不方便，需要把横表转成纵表才行。</p>
+<p>正纠结着忽然就想起来MySQL最新版(5.7)开始支持JSON形式的数据了,这样的话，多存一列的数据，无非就是增加一个key,value了。</p>
+<p>于是在网上搜了一下，说这方面的比较少，因此自己找到官方的说明，详细看了看，记下来，留待以后看。</p>
+<p>MySQL 函数分为四类，分别是创建（Create JSON Values）、修改（Modify JSON Values）、查询（Search JSON Values）以及返回json相关属性（Return JSON Value Attributes）的方法。</p>
+<h2 id="创建类的方法"><a href="#创建类的方法" class="headerlink" title="创建类的方法"></a>创建类的方法</h2><h3 id="JSON-ARRAY-val-val-…"><a href="#JSON-ARRAY-val-val-…" class="headerlink" title="JSON_ARRAY([val[, val] …])"></a>JSON_ARRAY([val[, val] …])</h3><p>创建JSON数组形式的数据</p>
+<pre class="prettyPrint">
+
+SELECT JSON_ARRAY(1, "abc", NULL, TRUE, CURTIME());
+
+[1, "abc", null, true, "11:30:24.000000"] 
+
+</pre>
+
+<h3 id="JSON-OBJECT-key-val-key-val-…"><a href="#JSON-OBJECT-key-val-key-val-…" class="headerlink" title="JSON_OBJECT([key, val[, key, val] …])"></a>JSON_OBJECT([key, val[, key, val] …])</h3><p>创建一个JSON对象</p>
+<pre class="prettyPrint">
+
+SELECT JSON_OBJECT('id', 87, 'name', 'carrot');
+
+ {"id": 87, "name": "carrot"}   
+
+</pre>
+
+<h3 id="修改类的方法"><a href="#修改类的方法" class="headerlink" title="修改类的方法"></a>修改类的方法</h3><h3 id="JSON-ARRAY-APPEND-json-doc-path-val-path-val-…"><a href="#JSON-ARRAY-APPEND-json-doc-path-val-path-val-…" class="headerlink" title="JSON_ARRAY_APPEND(json_doc, path, val[, path, val] …)"></a>JSON_ARRAY_APPEND(json_doc, path, val[, path, val] …)</h3><p>在JSON数组后增加新的数据</p>
+<pre class="prettyPrint">
+
+mysql> SET @j = '["a", ["b", "c"], "d"]';
+
+mysql> SELECT JSON_ARRAY_APPEND(@j, '$[1]', 1);
+
+["a", ["b", "c", 1], "d"]
+
+</pre>
+
+
+<h3 id="JSON-ARRAY-INSERT-json-doc-path-val-path-val-…"><a href="#JSON-ARRAY-INSERT-json-doc-path-val-path-val-…" class="headerlink" title="JSON_ARRAY_INSERT(json_doc, path, val[, path, val] …)"></a>JSON_ARRAY_INSERT(json_doc, path, val[, path, val] …)</h3><p>插入数据到JSON中，path为插入的路径</p>
+<pre class="prettyPrint">
+
+mysql> SET @j = '["a", {"b": [1, 2]}, [3, 4]]';
+mysql> SELECT JSON_ARRAY_INSERT(@j, '$[1]', 'x');
+
+["a", "x", {"b": [1, 2]}, [3, 4]]
+
+</pre>
+
+
+<h3 id="JSON-MERGE-json-doc-json-doc-json-doc-…"><a href="#JSON-MERGE-json-doc-json-doc-json-doc-…" class="headerlink" title="JSON_MERGE(json_doc, json_doc[, json_doc] …)"></a>JSON_MERGE(json_doc, json_doc[, json_doc] …)</h3><p>合并JSON数据</p>
+<pre class="prettyPrint">
+
+SELECT JSON_MERGE('[1, 2]', '[true, false]');
+
+[1, 2, true, false]
+
+</pre>
+
+
+<h3 id="JSON-REMOVE-json-doc-path-path-…"><a href="#JSON-REMOVE-json-doc-path-path-…" class="headerlink" title="JSON_REMOVE(json_doc, path[, path] …)"></a>JSON_REMOVE(json_doc, path[, path] …)</h3><p>删除一部分JSON数据</p>
+<pre class="prettyPrint">
+
+mysql> SET @j = '["a", ["b", "c"], "d"]';
+mysql> SELECT JSON_REMOVE(@j, '$[1]');
+
+["a", "d"]  
+
+</pre>
+
+<h3 id="JSON-REPLACE-json-doc-path-val-path-val-…"><a href="#JSON-REPLACE-json-doc-path-val-path-val-…" class="headerlink" title="JSON_REPLACE(json_doc, path, val[, path, val] …)"></a>JSON_REPLACE(json_doc, path, val[, path, val] …)</h3><p>替换一部分JSON数据</p>
+<pre class="prettyPrint">
+
+mysql> SET @j = '{ "a": 1, "b": [2, 3]}';
+mysql> SELECT JSON_REPLACE(@j, '$.a', 10, '$.c', '[true, false]');
+
+{"a": 10, "b": [2, 3]}  
+
+</pre>
+
+<h3 id="JSON-SET-json-doc-path-val-path-val-…"><a href="#JSON-SET-json-doc-path-val-path-val-…" class="headerlink" title="JSON_SET(json_doc, path, val[, path, val] …)"></a>JSON_SET(json_doc, path, val[, path, val] …)</h3><p>有存在的数据就替换，没有就插入</p>
+<pre class="prettyPrint">
+
+mysql> SET @j = '{ "a": 1, "b": [2, 3]}';
+mysql> SELECT JSON_SET(@j, '$.a', 10, '$.c', '[true, false]');
+
+{"a": 10, "b": [2, 3], "c": "[true, false]"} 
+
+</pre>
+
+
+<h2 id="查询类方法"><a href="#查询类方法" class="headerlink" title="查询类方法"></a>查询类方法</h2><h3 id="JSON-CONTAINS-json-doc-val-path"><a href="#JSON-CONTAINS-json-doc-val-path" class="headerlink" title="JSON_CONTAINS(json_doc, val[, path])"></a>JSON_CONTAINS(json_doc, val[, path])</h3><p>查找是否包含</p>
+<pre class="prettyPrint">
+
+mysql> SET @j = '{"a": 1, "b": 2, "c": {"d": 4}}';
+mysql> SET @j2 = '1';
+mysql> SELECT JSON_CONTAINS(@j, @j2, '$.a');
+
+1
+
+mysql> SELECT JSON_CONTAINS(@j, @j2, '$.b');
+
+0
+
+</pre>
+
+
+<h3 id="JSON-CONTAINS-PATH-json-doc-one-or-all-path-path-…"><a href="#JSON-CONTAINS-PATH-json-doc-one-or-all-path-path-…" class="headerlink" title="JSON_CONTAINS_PATH(json_doc, one_or_all, path[, path] …)"></a>JSON_CONTAINS_PATH(json_doc, one_or_all, path[, path] …)</h3><p>查找path（一般就是key）是否存在</p>
+<pre class="prettyPrint">
+
+mysql> SET @j = '{"a": 1, "b": 2, "c": {"d": 4}}';
+mysql> SELECT JSON_CONTAINS_PATH(@j, 'one', '$.a', '$.e');
+
+1
+
+mysql> SELECT JSON_CONTAINS_PATH(@j, 'all', '$.a', '$.e');
+
+0
+
+</pre>
+
+
+<h3 id="JSON-EXTRACT-json-doc-path-path-…"><a href="#JSON-EXTRACT-json-doc-path-path-…" class="headerlink" title="JSON_EXTRACT(json_doc, path[, path] …)"></a>JSON_EXTRACT(json_doc, path[, path] …)</h3><p>分解JSON 并查询，实际上就是在提供的path下查找值</p>
+<pre class="prettyPrint">
+
+mysql> SELECT JSON_EXTRACT('[10, 20, [30, 40]]', '$[1]');
+
+ 20
+
+
+mysql> SELECT JSON_EXTRACT('[10, 20, [30, 40]]', '$[1]', '$[0]');
+
+[20, 10]
+
+</pre>
+
+
+<h3 id="JSON-EXTRACT-的替代语法-column-gt-path"><a href="#JSON-EXTRACT-的替代语法-column-gt-path" class="headerlink" title="JSON_EXTRACT 的替代语法 column-&gt;path"></a>JSON_EXTRACT 的替代语法 column-&gt;path</h3><p>以下两种方式等价</p>
+<pre class="prettyPrint">
+
+mysql> SELECT c, JSON_EXTRACT(c, "$.id"), g 
+     > FROM jemp
+     > WHERE JSON_EXTRACT(c, "$.id") > 1 
+     > ORDER BY JSON_EXTRACT(c, "$.name");
+
+mysql> SELECT c, c->"$.id", g 
+     > FROM jemp
+     > WHERE c->"$.id" > 1 
+     > ORDER BY c->"$.name";
+
+</pre>
+
+
+<h3 id="JSON-KEYS-json-doc-path"><a href="#JSON-KEYS-json-doc-path" class="headerlink" title="JSON_KEYS(json_doc[, path])"></a>JSON_KEYS(json_doc[, path])</h3><p>提出当前提供path下的key值</p>
+<pre class="prettyPrint">
+
+SELECT JSON_KEYS('{"a": 1, "b": {"c": 30}}');
+
+["a", "b"]
+
+</pre>
+
+
+<h3 id="JSON-SEARCH-json-doc-one-or-all-search-str-escape-char-path-…"><a href="#JSON-SEARCH-json-doc-one-or-all-search-str-escape-char-path-…" class="headerlink" title="JSON_SEARCH(json_doc, one_or_all, search_str[, escape_char[, path] …])"></a>JSON_SEARCH(json_doc, one_or_all, search_str[, escape_char[, path] …])</h3><p>按着提供的值去查询，返回path数组</p>
+<pre class="prettyPrint">
+
+mysql> SET @j = '["abc", [{"k": "10"}, "def"], {"x":"abc"}, {"y":"bcd"}]';
+
+mysql> SELECT JSON_SEARCH(@j, 'one', 'abc');
+
+ "$[0]"     
+
+
+ mysql> SELECT JSON_SEARCH(@j, 'all', 'abc');
+
+ ["$[0]", "$[2].x"] 
+
+</pre>
+
+
+<h2 id="查询JSON自有属性的方法"><a href="#查询JSON自有属性的方法" class="headerlink" title="查询JSON自有属性的方法"></a>查询JSON自有属性的方法</h2><h3 id="JSON-DEPTH-json-doc"><a href="#JSON-DEPTH-json-doc" class="headerlink" title="JSON_DEPTH(json_doc)"></a>JSON_DEPTH(json_doc)</h3><p>查询当前JSON深度</p>
+<pre class="prettyPrint">
+
+SELECT JSON_DEPTH('[10, {"a": 20}]');
+
+3
+
+</pre>
+
+
+
+<h3 id="JSON-LENGTH-json-doc-path"><a href="#JSON-LENGTH-json-doc-path" class="headerlink" title="JSON_LENGTH(json_doc[, path])"></a>JSON_LENGTH(json_doc[, path])</h3><p>查询当前层级(path)下对象或者数组的元素数量</p>
+<pre class="prettyPrint">
+
+mysql> SELECT JSON_LENGTH('{"a": 1, "b": {"c": 30}}');
+
+2
+
+</pre>
+
+
+<h3 id="JSON-TYPE-json-val"><a href="#JSON-TYPE-json-val" class="headerlink" title="JSON_TYPE(json_val)"></a>JSON_TYPE(json_val)</h3><p>返回JSON值类型</p>
+<pre class="prettyPrint">
+
+mysql> SET @j = '{"a": [10, true]}';
+mysql> SELECT JSON_TYPE(@j);
+
+ OBJECT  
+
+SELECT JSON_TYPE(JSON_EXTRACT(@j, '$.a'));
+
+ARRAY
+
+</pre>
+
+
+<h3 id="JSON-VALID-val"><a href="#JSON-VALID-val" class="headerlink" title="JSON_VALID(val)"></a>JSON_VALID(val)</h3><p>验证是否是JSON</p>
+<pre class="prettyPrint">
+
+mysql> SELECT JSON_VALID('{"a": 1}');
+
+1
+
+SELECT JSON_VALID('hello'), JSON_VALID('"hello"');
+
+0,1
+
+</pre>
+
+
+
+<p>以上是基本的方法。</p>
+<p>后续有机会，在PHP上做些实验的话，在详细分享一下。</p>
+<p>注：以上内容参考自官方文档：<a href="https://dev.mysql.com/doc/refman/5.7/en/json-functions.html" target="_blank" rel="external">https://dev.mysql.com/doc/refman/5.7/en/json-functions.html</a></p>
+<p>说的不是很详细，详细的话请参考官方文档。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/10/20/oneframe-design/" rel="next" title="oneframe 设计 v0.1版">
+                <i class="fa fa-chevron-left"></i> oneframe 设计 v0.1版
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/10/20/mysql-json-functions/"
+           data-title="MySQL 5.7 新增加的JSON特性对应的json方法" data-url="http://sheldong.space/2016/10/20/mysql-json-functions/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="sheld" />
+          <p class="site-author-name" itemprop="name">sheld</p>
+          <p class="site-description motion-element" itemprop="description">sheld 的伪全栈笔记</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">7</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#创建类的方法"><span class="nav-number">1.</span> <span class="nav-text">创建类的方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JSON-ARRAY-val-val-…"><span class="nav-number">1.1.</span> <span class="nav-text">JSON_ARRAY([val[, val] …])</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JSON-OBJECT-key-val-key-val-…"><span class="nav-number">1.2.</span> <span class="nav-text">JSON_OBJECT([key, val[, key, val] …])</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修改类的方法"><span class="nav-number">1.3.</span> <span class="nav-text">修改类的方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JSON-ARRAY-APPEND-json-doc-path-val-path-val-…"><span class="nav-number">1.4.</span> <span class="nav-text">JSON_ARRAY_APPEND(json_doc, path, val[, path, val] …)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JSON-ARRAY-INSERT-json-doc-path-val-path-val-…"><span class="nav-number">1.5.</span> <span class="nav-text">JSON_ARRAY_INSERT(json_doc, path, val[, path, val] …)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JSON-MERGE-json-doc-json-doc-json-doc-…"><span class="nav-number">1.6.</span> <span class="nav-text">JSON_MERGE(json_doc, json_doc[, json_doc] …)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JSON-REMOVE-json-doc-path-path-…"><span class="nav-number">1.7.</span> <span class="nav-text">JSON_REMOVE(json_doc, path[, path] …)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JSON-REPLACE-json-doc-path-val-path-val-…"><span class="nav-number">1.8.</span> <span class="nav-text">JSON_REPLACE(json_doc, path, val[, path, val] …)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JSON-SET-json-doc-path-val-path-val-…"><span class="nav-number">1.9.</span> <span class="nav-text">JSON_SET(json_doc, path, val[, path, val] …)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#查询类方法"><span class="nav-number">2.</span> <span class="nav-text">查询类方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JSON-CONTAINS-json-doc-val-path"><span class="nav-number">2.1.</span> <span class="nav-text">JSON_CONTAINS(json_doc, val[, path])</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JSON-CONTAINS-PATH-json-doc-one-or-all-path-path-…"><span class="nav-number">2.2.</span> <span class="nav-text">JSON_CONTAINS_PATH(json_doc, one_or_all, path[, path] …)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JSON-EXTRACT-json-doc-path-path-…"><span class="nav-number">2.3.</span> <span class="nav-text">JSON_EXTRACT(json_doc, path[, path] …)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JSON-EXTRACT-的替代语法-column-gt-path"><span class="nav-number">2.4.</span> <span class="nav-text">JSON_EXTRACT 的替代语法 column->path</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JSON-KEYS-json-doc-path"><span class="nav-number">2.5.</span> <span class="nav-text">JSON_KEYS(json_doc[, path])</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JSON-SEARCH-json-doc-one-or-all-search-str-escape-char-path-…"><span class="nav-number">2.6.</span> <span class="nav-text">JSON_SEARCH(json_doc, one_or_all, search_str[, escape_char[, path] …])</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#查询JSON自有属性的方法"><span class="nav-number">3.</span> <span class="nav-text">查询JSON自有属性的方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JSON-DEPTH-json-doc"><span class="nav-number">3.1.</span> <span class="nav-text">JSON_DEPTH(json_doc)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JSON-LENGTH-json-doc-path"><span class="nav-number">3.2.</span> <span class="nav-text">JSON_LENGTH(json_doc[, path])</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JSON-TYPE-json-val"><span class="nav-number">3.3.</span> <span class="nav-text">JSON_TYPE(json_val)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JSON-VALID-val"><span class="nav-number">3.4.</span> <span class="nav-text">JSON_VALID(val)</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">sheld</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"sheldong"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("gL7tw5F27iffuzeaoRKAAP2v-gzGzoHsz", "C0VnJYNJ8lAyvSHaBeBN96zD");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+
+</body>
+</html>

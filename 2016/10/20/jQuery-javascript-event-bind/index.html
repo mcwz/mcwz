@@ -1,0 +1,816 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="jQuery , JavaScript , 事件绑定" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="在jQuery里摸爬滚打了一阵子后，感觉对JQ也算是比较来电了，谁知，今天遇到一件事，感觉还是有点力不从心，因此特意在此处记下来。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于jQuery与JavaScript的事件绑定">
+<meta property="og:url" content="http://sheldong.space/2016/10/20/jQuery-javascript-event-bind/index.html">
+<meta property="og:site_name" content="飞翔猴子">
+<meta property="og:description" content="在jQuery里摸爬滚打了一阵子后，感觉对JQ也算是比较来电了，谁知，今天遇到一件事，感觉还是有点力不从心，因此特意在此处记下来。">
+<meta property="og:updated_time" content="2016-10-21T02:03:33.786Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="关于jQuery与JavaScript的事件绑定">
+<meta name="twitter:description" content="在jQuery里摸爬滚打了一阵子后，感觉对JQ也算是比较来电了，谁知，今天遇到一件事，感觉还是有点力不从心，因此特意在此处记下来。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '6343723486652925000',
+      author: 'sheld'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://sheldong.space/2016/10/20/jQuery-javascript-event-bind/"/>
+
+
+  <title> 关于jQuery与JavaScript的事件绑定 | 飞翔猴子 </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?10269c66480f98f6f5f7819650322416";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">飞翔猴子</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule" rel="section">
+            
+            日程
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                关于jQuery与JavaScript的事件绑定
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-10-20T13:48:35+08:00" content="2016-10-20">
+              2016-10-20
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/前端/" itemprop="url" rel="index">
+                    <span itemprop="name">前端</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/10/20/jQuery-javascript-event-bind/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/20/jQuery-javascript-event-bind/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/10/20/jQuery-javascript-event-bind/" class="leancloud_visitors" data-flag-title="关于jQuery与JavaScript的事件绑定">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在jQuery里摸爬滚打了一阵子后，感觉对JQ也算是比较来电了，谁知，今天遇到一件事，感觉还是有点力不从心，因此特意在此处记下来。 </p>
+<a id="more"></a>
+<p>事情是这样滴：我在做一个鼠标移上去执行某个动作的操作。当然，这肯定是用mouseover事件，结果该执行的代码没有执行，本着懒人的态度，我没有去详细分析原因，猜测应该是 DOM是后加载过来的，那么干脆直接用bind算了，bind一个应该没有问题吧，结果还不行，于是我就晕了。无可奈何之下，只能百度（不要拍我，我也想用google,不过实在是太慢了，有时候搜到了还打不开），关键词是这样的“jQuery 绑定事件失效”。结果我搜到了一般关于live方法的文章。文章太长了，又有代码，不好理顺了，继续懒人，直接翻一下手册，看看live。结果发现正好合适，live可以想像成bind的bind的（当然实际上不是），于是用了一下，果然可以了。高兴之余，记录之。</p>
+<ul>
+<li>正文: *</li>
+</ul>
+<h2 id="Javascipt的事件绑定"><a href="#Javascipt的事件绑定" class="headerlink" title="Javascipt的事件绑定"></a>Javascipt的事件绑定</h2><p>这个可以使用一些DOM自带的绑定方式：如 </p>
+<p><code>&lt;a href=&quot;#&quot; onclick=&quot;runthis()&quot;&gt;&lt;/a&gt;</code></p>
+<p>如果您的JS代码里有对应的runthis方法，那么这个就可以执行了。 </p>
+<p>这么用的好处是一目了然，看一下就知道点击的话会执行哪个方法，而且问题少，只要DOM在，这个事件就会被绑定；缺点是JS代码和HTML混到一起了。说白了就是耦合度太高，哪天不需要这个click事件了，要改html。 </p>
+<p>当然Javascipt也可以直接在自己的代码里做绑定，但原理就和jQuery的一样了，那么干脆直接说jQuery的事件绑定。 </p>
+<h2 id="jQuery事件绑定"><a href="#jQuery事件绑定" class="headerlink" title="jQuery事件绑定"></a>jQuery事件绑定</h2><p>基础绑定obj.click()</p>
+<p>这个绑定是理解起来最简单的事件绑定 </p>
+<p>手册里是这么写的 </p>
+<p><code>$(&quot;p&quot;).click( function () { $(this).hide(); });</code></p>
+<p>这样的话，点击P后会隐藏掉自己。 </p>
+<p>这种情况下，如果DOM一直没有增加的话，完全能应付。然而这个DOM是如果在页面初始化的时候不存在后来又加进来的咋办呢？ </p>
+<p>这时候就到了bind上场了。 </p>
+<h2 id="稍微灵活点的事件绑定obj-bind-‘click’-function"><a href="#稍微灵活点的事件绑定obj-bind-‘click’-function" class="headerlink" title="稍微灵活点的事件绑定obj.bind(‘click’,function(){})"></a>稍微灵活点的事件绑定obj.bind(‘click’,function(){})</h2><p>这个稍微灵活一些，你可以随时执行这个方法，前提是只要这个DOM在执行这段话的时候已经存在的，那么你就可以处理了，一定要记得哈，这个DOM存在之后才能绑。过了这个村就跟bind没关系了。 </p>
+<p><code>$(&quot;p&quot;).bind(&quot;click&quot;, function(){ 
+  alert( $(this).text() ); 
+});</code></p>
+<p>然而我这人又懒了，我不想在执行绑定的事件的时候看看这个DOM有了没，我想开始的时候就加上它，什么时候有了这个DOM都可以执行就可以了。 </p>
+<p>这时候NB的live出厂了。 </p>
+<h2 id="NB的绑定事件的方法live"><a href="#NB的绑定事件的方法live" class="headerlink" title="NB的绑定事件的方法live"></a>NB的绑定事件的方法live</h2><p><code>obj.live(&#39;click&#39;,function(){});</code></p>
+<p>这个看起来是和bind长的很像的，但是是bind的变种。书上说，这家伙在不管当前DOM有没有都行。也就是说后期你加入的DOM照样能绑上！ </p>
+<p><code>$(&#39;.clickme&#39;).live(&#39;click&#39;, function() { 
+  alert(&quot;Bound handler called.&quot;); 
+});</code></p>
+<p>就像这样，原来的时候你有一些class叫做clickme的可以运行，执行完这句后有新加的clickme也行！ </p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JavaScript/" rel="tag">#JavaScript</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/10/20/apache-mime-mime-magic/" rel="next" title="关于Apache MIME和MIME_Magic模块">
+                <i class="fa fa-chevron-left"></i> 关于Apache MIME和MIME_Magic模块
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/10/20/memcache-mongodb-redis-diffrence/" rel="prev" title="memcached，mongodb和redis三者区别，以及memcached项目实践">
+                memcached，mongodb和redis三者区别，以及memcached项目实践 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/10/20/jQuery-javascript-event-bind/"
+           data-title="关于jQuery与JavaScript的事件绑定" data-url="http://sheldong.space/2016/10/20/jQuery-javascript-event-bind/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="sheld" />
+          <p class="site-author-name" itemprop="name">sheld</p>
+          <p class="site-description motion-element" itemprop="description">sheld 的伪全栈笔记</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">7</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Javascipt的事件绑定"><span class="nav-number">1.</span> <span class="nav-text">Javascipt的事件绑定</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jQuery事件绑定"><span class="nav-number">2.</span> <span class="nav-text">jQuery事件绑定</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#稍微灵活点的事件绑定obj-bind-‘click’-function"><span class="nav-number">3.</span> <span class="nav-text">稍微灵活点的事件绑定obj.bind(‘click’,function(){})</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NB的绑定事件的方法live"><span class="nav-number">4.</span> <span class="nav-text">NB的绑定事件的方法live</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">sheld</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"sheldong"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("gL7tw5F27iffuzeaoRKAAP2v-gzGzoHsz", "C0VnJYNJ8lAyvSHaBeBN96zD");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+
+</body>
+</html>

@@ -1,0 +1,783 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="本文介绍netty如何建立websocket链接，如果给别人发送信息，以及如何发送广播。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用netty基于websocket做一个聊天室">
+<meta property="og:url" content="http://sheldong.space/2016/10/20/netty-websocket-chatroom/index.html">
+<meta property="og:site_name" content="飞翔猴子">
+<meta property="og:description" content="本文介绍netty如何建立websocket链接，如果给别人发送信息，以及如何发送广播。">
+<meta property="og:updated_time" content="2016-10-21T02:05:22.866Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用netty基于websocket做一个聊天室">
+<meta name="twitter:description" content="本文介绍netty如何建立websocket链接，如果给别人发送信息，以及如何发送广播。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '6343723486652925000',
+      author: 'sheld'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://sheldong.space/2016/10/20/netty-websocket-chatroom/"/>
+
+
+  <title> 使用netty基于websocket做一个聊天室 | 飞翔猴子 </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?10269c66480f98f6f5f7819650322416";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">飞翔猴子</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule" rel="section">
+            
+            日程
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                使用netty基于websocket做一个聊天室
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-10-20T14:08:00+08:00" content="2016-10-20">
+              2016-10-20
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/10/20/netty-websocket-chatroom/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/20/netty-websocket-chatroom/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/10/20/netty-websocket-chatroom/" class="leancloud_visitors" data-flag-title="使用netty基于websocket做一个聊天室">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>实际上以前做过一次netty实现websocket的实验，当时是按着《netty权威指南》书中的介绍敲代码做的测试，虽然运行没有问题，但是想进一步实现客户端互发消息没成功，恰好当时忽然忙起来了，这事儿就过去了。</p>
+<a id="more"></a>
+<p>最近稍微闲了些，决定继续试试。以前卡在的地方就是每次客户端连接生成的相关对象都是针对自己的，如果想互相发信息，必须要先识别到对方的java对象，思索良久，总是卡着过不去。后来灵机一动，才反应过来，可以设一个应用级的变量池子啊，把对象都放进去，然后需要给谁发就挑出哪个对象即可。</p>
+<p>通了之后，立刻行动，先做个广播消息吧，也就是说不用识别是哪个对象了，收到个消息，然后循环调用每个对象发送这个消息，即完成广播功能，看起来就是一个聊天室的雏形了。</p>
+<p>以下列举的代码大部分是《netty权威指南》提到的，在此表示感谢，我修改了一下，增加一些能够群发的逻辑，同时这只是个演示，代码中涉及到了多线程，但是没处理线程同步问题。</p>
+<h2 id="列出代码"><a href="#列出代码" class="headerlink" title="列出代码"></a>列出代码</h2><p>WebSocketServer.java 主要完成程序启动</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">public class WebSocketServer &#123;</div><div class="line"></div><div class="line">	public void run(int port) throws Exception &#123;</div><div class="line">		EventLoopGroup bossGroup = new NioEventLoopGroup();</div><div class="line">		EventLoopGroup workerGroup = new NioEventLoopGroup();</div><div class="line">		try &#123;</div><div class="line">			ServerBootstrap b = new ServerBootstrap();</div><div class="line">			b.group(bossGroup, workerGroup)</div><div class="line">					.channel(NioServerSocketChannel.class)</div><div class="line">					.childHandler(new ChannelInitializer&lt;SocketChannel&gt;() &#123;</div><div class="line">						@Override</div><div class="line">						protected void initChannel(SocketChannel ch)</div><div class="line">								throws Exception &#123;</div><div class="line">							ChannelPipeline pipeline = ch.pipeline();</div><div class="line">							pipeline.addLast("http-codec",</div><div class="line">									new HttpServerCodec());</div><div class="line">							pipeline.addLast("aggregator",</div><div class="line">									new HttpObjectAggregator(65536));</div><div class="line">							ch.pipeline().addLast("http-chunked",</div><div class="line">									new ChunkedWriteHandler());</div><div class="line">							pipeline.addLast("handler",</div><div class="line">									new WebSocketServerHandler());</div><div class="line">						&#125;</div><div class="line">					&#125;);</div><div class="line">			Channel ch = b.bind(port).sync().channel();</div><div class="line">			System.out.println("Web Socket Server started</div><div class="line">			at port :" + port	+ ".");</div><div class="line">			System.out.println("Open your web browser and </div><div class="line">			navigate to http://localhost:"+ port + "/");</div><div class="line">			</div><div class="line">			CheckRunningPoll crp=new CheckRunningPoll();</div><div class="line">			Thread checkpoll = new Thread(crp);</div><div class="line">			checkpoll.start();</div><div class="line">			</div><div class="line">			ch.closeFuture().sync();</div><div class="line">			</div><div class="line">			</div><div class="line"></div><div class="line">		&#125; finally &#123;</div><div class="line">			bossGroup.shutdownGracefully();</div><div class="line">			workerGroup.shutdownGracefully();</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	public static void main(String[] args) &#123;</div><div class="line">		int port = 8080;</div><div class="line"></div><div class="line">		if (args.length &gt; 0) &#123;</div><div class="line">			try &#123;</div><div class="line">				port = Integer.parseInt(args[0]);</div><div class="line">			&#125; catch (NumberFormatException e) &#123;</div><div class="line">				e.printStackTrace();</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		try &#123;</div><div class="line">			new WebSocketServer().run(port);</div><div class="line">		&#125; catch (Exception e) &#123;</div><div class="line">			e.printStackTrace();</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>ClientPoll.java 客户端池子</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClientPoll</span> </span>&#123;</div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> Map&lt;String,ChannelHandlerContext&gt; clientMap=<span class="keyword">new</span> HashMap&lt;String, ChannelHandlerContext&gt;();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>WebSocketServerHandler.java 完成websocket的定义过程</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebSocketServerHandler</span> <span class="keyword">extends</span> <span class="title">SimpleChannelInboundHandler</span>&lt;<span class="title">Object</span>&gt; </span>&#123;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Logger logger=Logger.getLogger(WebSocketServerHandler.class.getName());</div><div class="line">	<span class="keyword">private</span> WebSocketServerHandshaker handshaker;</div><div class="line">	<span class="keyword">private</span> String clientIp;</div><div class="line"></div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">messageReceived</span><span class="params">(ChannelHandlerContext ctx, Object msg)</span></span></div><div class="line">			<span class="keyword">throws</span> Exception &#123;</div><div class="line">		<span class="keyword">if</span>(msg <span class="keyword">instanceof</span> FullHttpRequest)</div><div class="line">		&#123;</div><div class="line">			FullHttpRequest mReq=(FullHttpRequest)msg;</div><div class="line">			handleHttpRequest(ctx, mReq);</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">else</span> <span class="keyword">if</span>(msg <span class="keyword">instanceof</span> WebSocketFrame)</div><div class="line">		&#123;</div><div class="line">			handleWebSocketFrame(ctx, (WebSocketFrame)msg);</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">else</span> <span class="keyword">if</span> (msg <span class="keyword">instanceof</span> HttpRequest) &#123;</div><div class="line">			HttpRequest mReq = (HttpRequest) msg;</div><div class="line">			String clientIP = mReq.headers().get(<span class="string">"X-Forwarded-For"</span>);</div><div class="line">			<span class="keyword">if</span> (clientIP == <span class="keyword">null</span>) &#123;</div><div class="line">				InetSocketAddress insocket = (InetSocketAddress) ctx.channel()</div><div class="line">						.remoteAddress();</div><div class="line">				clientIP = insocket.getAddress().getHostAddress();</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;	</div><div class="line">	</div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelReadComplete</span><span class="params">(ChannelHandlerContext ctx)</span> <span class="keyword">throws</span> Exception</span></div><div class="line">	&#123;</div><div class="line">		ctx.flush();</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">exceptionCaught</span><span class="params">(ChannelHandlerContext ctx,Throwable cause)</span> <span class="keyword">throws</span> Exception</span></div><div class="line">	&#123;</div><div class="line">		cause.printStackTrace();</div><div class="line">		ctx.close();</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">handleHttpRequest</span><span class="params">(ChannelHandlerContext ctx,FullHttpRequest req)</span> <span class="keyword">throws</span> Exception</span></div><div class="line">	&#123;</div><div class="line">		<span class="keyword">if</span>(!req.getDecoderResult().isSuccess() || (!<span class="string">"websocket"</span>.equals(req.headers().get(<span class="string">"Upgrade"</span>))))</div><div class="line">		&#123;</div><div class="line">			sendHttpResponse(ctx, req, <span class="keyword">new</span> DefaultFullHttpResponse(HttpVersion.HTTP_1_1,HttpResponseStatus.BAD_REQUEST));</div><div class="line">			<span class="keyword">return</span> ;</div><div class="line">		&#125;</div><div class="line">		WebSocketServerHandshakerFactory wsFactory=<span class="keyword">new</span> WebSocketServerHandshakerFactory(<span class="string">"ws://127.0.0.1:8080/websocket"</span>, <span class="keyword">null</span>, <span class="keyword">false</span>);</div><div class="line">		handshaker=wsFactory.newHandshaker(req);</div><div class="line">		<span class="keyword">if</span>(handshaker==<span class="keyword">null</span>)</div><div class="line">		&#123;</div><div class="line">			WebSocketServerHandshakerFactory.sendUnsupportedWebSocketVersionResponse(ctx.channel());</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">else</span></div><div class="line">		&#123;</div><div class="line">			handshaker.handshake(ctx.channel(), req);</div><div class="line">			String clientIP = req.headers().get(<span class="string">"X-Forwarded-For"</span>);</div><div class="line">			<span class="keyword">if</span> (clientIP == <span class="keyword">null</span>) &#123;</div><div class="line">				InetSocketAddress insocket = (InetSocketAddress) ctx.channel()</div><div class="line">						.remoteAddress();</div><div class="line">				clientIP = insocket.getAddress().getHostAddress();</div><div class="line">			&#125;</div><div class="line">			<span class="keyword">this</span>.clientIp=clientIP;</div><div class="line">			ClientPoll.clientMap.put(clientIP, ctx);</div><div class="line">		&#125;</div><div class="line"></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">handleWebSocketFrame</span><span class="params">(ChannelHandlerContext ctx,WebSocketFrame frame)</span></span></div><div class="line">	&#123;</div><div class="line">		<span class="keyword">if</span>(frame <span class="keyword">instanceof</span> CloseWebSocketFrame)</div><div class="line">		&#123;</div><div class="line">			handshaker.close(ctx.channel(), (CloseWebSocketFrame) frame.retain());</div><div class="line">			<span class="keyword">return</span> ;</div><div class="line">		&#125;</div><div class="line">		</div><div class="line">		<span class="keyword">if</span>(frame <span class="keyword">instanceof</span> PingWebSocketFrame)</div><div class="line">		&#123;</div><div class="line">			ctx.channel().write(<span class="keyword">new</span> PongWebSocketFrame(frame.content().retain())); </div><div class="line">			<span class="keyword">return</span> ;</div><div class="line">		&#125;</div><div class="line">		</div><div class="line">		<span class="keyword">if</span>(!(frame <span class="keyword">instanceof</span> TextWebSocketFrame))</div><div class="line">		&#123;</div><div class="line">			<span class="keyword">throw</span> <span class="keyword">new</span> UnsupportedOperationException(String.format(<span class="string">"%s frame types not supported "</span>, frame.getClass().getName()));</div><div class="line">		&#125;</div><div class="line">		</div><div class="line">		String request=((TextWebSocketFrame) frame).text();</div><div class="line">		<span class="keyword">if</span>(logger.isLoggable(Level.FINE))</div><div class="line">		&#123;</div><div class="line">			logger.fine(String.format(<span class="string">"%s received %s"</span>, ctx.channel()));</div><div class="line">		&#125;</div><div class="line">		Broadcast.broadcast(<span class="string">"IP是"</span>+<span class="keyword">this</span>.clientIp+<span class="string">"的朋友给大家广播了一条消息："</span>+request);</div><div class="line">		<span class="comment">//ctx.channel().write(new TextWebSocketFrame(request+",这里是服务器应答："+new java.util.Date().toString()));</span></div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sendHttpResponse</span><span class="params">(ChannelHandlerContext ctx,FullHttpRequest req,FullHttpResponse res)</span></span></div><div class="line">	&#123;</div><div class="line">		<span class="keyword">if</span>(res.getStatus().code()!=<span class="number">200</span>)</div><div class="line">		&#123;</div><div class="line">			ByteBuf buf=Unpooled.copiedBuffer(res.getStatus().toString(),CharsetUtil.UTF_8);</div><div class="line">			res.content().writeBytes(buf);</div><div class="line">			buf.release();</div><div class="line">			setContentLength(res,res.content().readableBytes());</div><div class="line">		&#125;</div><div class="line">		ChannelFuture f=ctx.channel().writeAndFlush(res);</div><div class="line">		<span class="keyword">if</span>(!isKeepAlive(req) || res.getStatus().code()!=<span class="number">200</span>)</div><div class="line">		&#123;</div><div class="line">			f.addListener(ChannelFutureListener.CLOSE);</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>CheckRunningPoll.java我自己写的一个线程，检测是否有新消息要群发</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CheckRunningPoll</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">try</span> &#123;</div><div class="line">			<span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</div><div class="line">				<span class="keyword">for</span> (Entry&lt;String, ChannelHandlerContext&gt; entry : ClientPoll.clientMap.entrySet()) &#123;</div><div class="line">					String clientIP=entry.getKey();</div><div class="line">					ChannelHandlerContext ctx=entry.getValue();</div><div class="line">					ctx.channel().writeAndFlush(<span class="keyword">new</span> TextWebSocketFrame(<span class="string">"您的服务器IP是："</span>+clientIP+<span class="string">",服务器发给您的消息是："</span>+ <span class="keyword">new</span> java.util.Date().toString()));</div><div class="line">				&#125;</div><div class="line">				</div><div class="line"></div><div class="line">				Thread.sleep(<span class="number">2000</span>);</div><div class="line">			&#125;</div><div class="line">		&#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">			e.printStackTrace();</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Broadcast.java广播消息</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Broadcast</span> </span>&#123;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">broadcast</span><span class="params">(String message)</span></span></div><div class="line">	&#123;</div><div class="line">		<span class="keyword">for</span> (Entry&lt;String, ChannelHandlerContext&gt; entry : ClientPoll.clientMap.entrySet()) &#123;</div><div class="line">			ChannelHandlerContext ctx=entry.getValue();</div><div class="line">			ctx.channel().writeAndFlush(<span class="keyword">new</span> TextWebSocketFrame(message));</div><div class="line">		&#125;</div><div class="line">		</div><div class="line">		</div><div class="line">		</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="大概解释一下"><a href="#大概解释一下" class="headerlink" title="大概解释一下"></a>大概解释一下</h2><p>我就不详细介绍每行代码了，有不了解原理的建议读一下《netty权威指南》这本书，或者发评论咨询。</p>
+<p>在这里我仅仅对我的改进思路解释一下：首先在websocket握手成功之后，把代表当前的客户端的对象存入池子，然后写一个线程每个两分钟看一下池子，有对象就循环发送服务器消息（服务器时间），在handleWebSocketFrame方法中调取Broadcast把刚刚收到的消息广播出去。</p>
+<p>P.S. </p>
+<ol>
+<li>文中的代码不是最优方案，仅作演示，有好的方案欢迎交流。</li>
+<li>文中代码取自《netty权威指南》223-230页。</li>
+</ol>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/10/20/memcache-mongodb-redis-diffrence/" rel="next" title="memcached，mongodb和redis三者区别，以及memcached项目实践">
+                <i class="fa fa-chevron-left"></i> memcached，mongodb和redis三者区别，以及memcached项目实践
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/10/20/oneframe-design/" rel="prev" title="oneframe 设计 v0.1版">
+                oneframe 设计 v0.1版 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/10/20/netty-websocket-chatroom/"
+           data-title="使用netty基于websocket做一个聊天室" data-url="http://sheldong.space/2016/10/20/netty-websocket-chatroom/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="sheld" />
+          <p class="site-author-name" itemprop="name">sheld</p>
+          <p class="site-description motion-element" itemprop="description">sheld 的伪全栈笔记</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">7</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#列出代码"><span class="nav-number">1.</span> <span class="nav-text">列出代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#大概解释一下"><span class="nav-number">2.</span> <span class="nav-text">大概解释一下</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">sheld</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"sheldong"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("gL7tw5F27iffuzeaoRKAAP2v-gzGzoHsz", "C0VnJYNJ8lAyvSHaBeBN96zD");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+
+</body>
+</html>

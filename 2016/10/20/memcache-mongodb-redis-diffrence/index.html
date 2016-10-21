@@ -1,0 +1,782 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="memcached,mongodb,redis,区别,项目实践" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="两三年前做了一个不是很大的项目，代码级也不大，数量级也不大，只是突发流量稍微大些，先是拖垮了数据库服务器，后来又拖垮整个Web服务器，优化后，服务器没啥问题了，但是带宽……好了不说这个了，先大概说一下个人理解的这三者的区别吧。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="memcached，mongodb和redis三者区别，以及memcached项目实践">
+<meta property="og:url" content="http://sheldong.space/2016/10/20/memcache-mongodb-redis-diffrence/index.html">
+<meta property="og:site_name" content="飞翔猴子">
+<meta property="og:description" content="两三年前做了一个不是很大的项目，代码级也不大，数量级也不大，只是突发流量稍微大些，先是拖垮了数据库服务器，后来又拖垮整个Web服务器，优化后，服务器没啥问题了，但是带宽……好了不说这个了，先大概说一下个人理解的这三者的区别吧。">
+<meta property="og:updated_time" content="2016-10-21T02:05:29.977Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="memcached，mongodb和redis三者区别，以及memcached项目实践">
+<meta name="twitter:description" content="两三年前做了一个不是很大的项目，代码级也不大，数量级也不大，只是突发流量稍微大些，先是拖垮了数据库服务器，后来又拖垮整个Web服务器，优化后，服务器没啥问题了，但是带宽……好了不说这个了，先大概说一下个人理解的这三者的区别吧。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '6343723486652925000',
+      author: 'sheld'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://sheldong.space/2016/10/20/memcache-mongodb-redis-diffrence/"/>
+
+
+  <title> memcached，mongodb和redis三者区别，以及memcached项目实践 | 飞翔猴子 </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?10269c66480f98f6f5f7819650322416";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">飞翔猴子</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule" rel="section">
+            
+            日程
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                memcached，mongodb和redis三者区别，以及memcached项目实践
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-10-20T14:06:19+08:00" content="2016-10-20">
+              2016-10-20
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/10/20/memcache-mongodb-redis-diffrence/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/20/memcache-mongodb-redis-diffrence/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/10/20/memcache-mongodb-redis-diffrence/" class="leancloud_visitors" data-flag-title="memcached，mongodb和redis三者区别，以及memcached项目实践">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>两三年前做了一个不是很大的项目，代码级也不大，数量级也不大，只是突发流量稍微大些，先是拖垮了数据库服务器，后来又拖垮整个Web服务器，优化后，服务器没啥问题了，但是带宽……好了不说这个了，先大概说一下个人理解的这三者的区别吧。</p>
+<a id="more"></a>
+<h2 id="三者区别"><a href="#三者区别" class="headerlink" title="三者区别"></a>三者区别</h2><p>memcached 和redis 都属于缓存系列的，也就是说缓存的事你找它就对了，但是想长期保存数据是不成的。而 memcached 更是内存级缓存，限于内存的物理特性，断电即丢失数据，因此存在 memcached 里的数据要确保丢失后没有太大影响。Redis 配置好后可以把数据持久化到磁盘存储，但它根上还是一个缓存级数据库，不适合大数据存储。</p>
+<p>MongoDB 是一种非关系型数据库，可以在磁盘上保存大数据，同时具有大部分数据库该有的功能，如：查询、索引、聚合、复制等多种功能，但同样的，它是为数据库级设计的，因此缓存不是它所擅长的。作为一个非关系型数据库，MongoDB保存数据的形式不再是二维表的格式，取而代之的是更为灵活的文档(document)模型。</p>
+<p>大概的理解就是这些了，如果认真总结的话应该还有很多，不再多说了。下面就简单描述一下，以前用memcached完成的一个小项目。</p>
+<h2 id="memcached项目实践经过"><a href="#memcached项目实践经过" class="headerlink" title="memcached项目实践经过"></a>memcached项目实践经过</h2><p>这个项目是一个小型投票专题，本来没什么大流量，业务逻辑也很简单，就是给候选人点击增加票数，有IP限制，每个IP每小时只能投票一次，不过没有验证码，领导说，有验证码会让投票的人觉得麻烦而放弃投票，于是整个系统就暴露给了刷票者。刚开始还比较顺畅，平均一分钟也就是几十个投票，对于任何服务器、任何构架来说都是小菜一碟。可后来事情有了本质的变化，因为该投票是跟候选者利益相关的，票数高的话能拿奖的，也不知道那些刷票公司从哪里获得了这些人的联系方式，悄悄的联系那些候选者提供有偿的刷票服务，于是服务器流量陡增。最开始单纯的投票，服务器还是撑得住的，毕竟只是去数据库里检查一下这个IP有没有投过票，有的话并且时间在1小时以内的话就放弃掉此次投票，否则给投票数加1，并记住此次投票的IP、时间等信息。</p>
+<p>然后随着刷票越接近尾声，刷票越是疯狂，第一个撑不住的是Web服务器，原因是数据库那边记录IP库的数据行数太大了，快接近百万行了，这时候，从百万行里Select出一小时内的数据，并检查IP情况，对数据库来说是有点压力了，虽然每次读取时间也就是几百毫秒到1秒，但是毕竟同一时间刷票请求多啊，导致投票请求递增迟延，最后给的apache 2000的连接数很快就不够了，然后发生了雪崩效应，等待的请求越多，服务器越慢，然后整体宕机了，很多的投票请求很快就因为超时而断开了。</p>
+<p>话说这也怪我了，我本来以为只是一个小小的投票，以前总票数都不会超过10w，哪想到这次来的这么疯狂。</p>
+<p>禁不住一个个咨询电话的轰炸，决定试着处理下。首先既然是数据库的问题，先从数据库下手吧，把IP从字符串形式还成了long型，把时间从常见的时间格式也改成了int型的时间戳，这样查询起来毕竟是快些。然后是给投票页读票数那里改成非实时的，每隔5分钟生成一下静态页，这样释放了一些读取的压力。结果上线不到半小时，WEB服务器又宕了，比较系统的连接数发现，连接数是上去些了，但是抵不住刷票公司啊，他们那边应该是集群式刷票，都是机器干的事儿，等多久无所谓，我这边优化好了，他们那边继续刷呗，就像是流着水的橡胶管，原来有只手掐着，水流就那么大，后来我优化了一下，手放松了些，但是水流量大，虽然水管粗了些，但仍然是满的。</p>
+<p>后来很无奈，决定使用缓存。</p>
+<p>我分析了一下，发现缓存很适合放到WEB服务器和数据库之间作为验证IP逻辑。</p>
+<p>大致流程是：</p>
+<p>接过WEB服务器给的投票请求，先把IP Hash成字符串作为Key值，然后去memcached里去查询，如果key值是存在的，那么扔到此次的投票请求。</p>
+<p>如果发现没有此条记录，那么将此key存到memcached，值任意，比如是1，有效期设为1小时，这样我都不用去管时间的问题了。接着再把投票请求交给正常逻辑继续完成投票过程，同时改掉投票逻辑不在验证IP，但是也会把此次投票数据以记录形式存到数据库，方便后期分析投票详情（虽然这些数据意义不大）。</p>
+<p>我大概用一天的时候完成了这个构架的转变，遗憾的是，本次投票接近尾声了，还没验证出来此次的成果。</p>
+<p>第二年同期，又有相同类型的投票，我是直接把前一次的思路直接用上了，详细观察了一下整个服务器的负载，数据库压力几乎可以忽略不计（因为只有可投票的请求才回到数据库端，即使请求到了数据库端也只剩下了一次Insert和一次update），数据库迟延小了后，Apache 那端也就没什么压力了，只有memcached占的内存稍微多些，但是整体一直很稳定。整个服务器在投票期间运行稳定，没有宕机，但是快尾声的时候还是接到电话轰炸了，原因还是投不了票，检查了一下，发现服务器没问题，再一看流量明白了，30M的带宽跑满了（当时这30M不是都给这一台服务器的，员工上网也共享这些带宽），同时也接到投诉说是上不了网了。但是已经接近尾声了，领导说坚持坚持过去吧……</p>
+<p>你可能会问，为啥不加个验证码啊，为啥不把服务器流量和上网带宽分开啊，为啥不…… 因为领导说不啊，领导也是综合了各种情况包括money原因考虑的啊。</p>
+<p>第三年的时候，为了不被自己人数落，为了保证访客能投票，把项目迁到阿里云去了，同时增加了验证码。最后算是撑下来了。</p>
+<h2 id="写在项目最后"><a href="#写在项目最后" class="headerlink" title="写在项目最后"></a>写在项目最后</h2><p>我一直还不知道那些刷票公司是怎么刷的，真的有那么多的机器（或者“肉鸡”）来分布式刷的么？或者是伪造了IP？</p>
+<p>甚至加了验证码也能刷，只不过是稍微慢了些，当然如果我验证码足够复杂，可能他们也刷不了了，不过访客估计也会打电话说投不了了。</p>
+<p>如果有懂他们是怎么刷的，亦或者有人在刷票公司工作，望不吝赐教一二，满足一下好奇心。 </p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/10/20/jQuery-javascript-event-bind/" rel="next" title="关于jQuery与JavaScript的事件绑定">
+                <i class="fa fa-chevron-left"></i> 关于jQuery与JavaScript的事件绑定
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/10/20/netty-websocket-chatroom/" rel="prev" title="使用netty基于websocket做一个聊天室">
+                使用netty基于websocket做一个聊天室 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/10/20/memcache-mongodb-redis-diffrence/"
+           data-title="memcached，mongodb和redis三者区别，以及memcached项目实践" data-url="http://sheldong.space/2016/10/20/memcache-mongodb-redis-diffrence/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="sheld" />
+          <p class="site-author-name" itemprop="name">sheld</p>
+          <p class="site-description motion-element" itemprop="description">sheld 的伪全栈笔记</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">7</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#三者区别"><span class="nav-number">1.</span> <span class="nav-text">三者区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#memcached项目实践经过"><span class="nav-number">2.</span> <span class="nav-text">memcached项目实践经过</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#写在项目最后"><span class="nav-number">3.</span> <span class="nav-text">写在项目最后</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">sheld</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"sheldong"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("gL7tw5F27iffuzeaoRKAAP2v-gzGzoHsz", "C0VnJYNJ8lAyvSHaBeBN96zD");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+
+</body>
+</html>
