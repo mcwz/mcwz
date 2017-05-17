@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="oneframe,PHP框架,框架设计" />
+  <meta name="keywords" content="Codeigniter" />
 
 
 
@@ -84,16 +84,16 @@
 
 
 
-<meta name="description" content="oneframe 是我自己学习各种框架时练手的一个项目，目的仅仅是加深对各种框架的设计思路的理解。">
+<meta name="description" content="CI 为了追上“大家”的脚步，这次跨了一大步，尽量使用了更多的流行设计理念，甚至连 PHP 的支持版本都是从 7 开始起步的。我在之前阅读源码的同时也发现了很多变化的地方，在此把已经发现的列举出来，不过肯定是不全的，因为我还没读完（逃跑~）。等再发现新的值得一聊的，并且能凑够一篇文章的内容的话，我会再继续写一篇的。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="oneframe 设计 v0.1版">
-<meta property="og:url" content="http://sheldong.space/2016/10/20/oneframe-design/index.html">
+<meta property="og:title" content="Codeigniter 4.0-dev 版源码学习笔记之五——相对于 3.x 的变化">
+<meta property="og:url" content="http://sheldong.space/2017/05/13/codeigniter-4-reader-05-different-3-x/index.html">
 <meta property="og:site_name" content="飞翔猴子">
-<meta property="og:description" content="oneframe 是我自己学习各种框架时练手的一个项目，目的仅仅是加深对各种框架的设计思路的理解。">
-<meta property="og:updated_time" content="2016-10-21T02:05:14.802Z">
+<meta property="og:description" content="CI 为了追上“大家”的脚步，这次跨了一大步，尽量使用了更多的流行设计理念，甚至连 PHP 的支持版本都是从 7 开始起步的。我在之前阅读源码的同时也发现了很多变化的地方，在此把已经发现的列举出来，不过肯定是不全的，因为我还没读完（逃跑~）。等再发现新的值得一聊的，并且能凑够一篇文章的内容的话，我会再继续写一篇的。">
+<meta property="og:updated_time" content="2017-05-17T09:16:03.182Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="oneframe 设计 v0.1版">
-<meta name="twitter:description" content="oneframe 是我自己学习各种框架时练手的一个项目，目的仅仅是加深对各种框架的设计思路的理解。">
+<meta name="twitter:title" content="Codeigniter 4.0-dev 版源码学习笔记之五——相对于 3.x 的变化">
+<meta name="twitter:description" content="CI 为了追上“大家”的脚步，这次跨了一大步，尽量使用了更多的流行设计理念，甚至连 PHP 的支持版本都是从 7 开始起步的。我在之前阅读源码的同时也发现了很多变化的地方，在此把已经发现的列举出来，不过肯定是不全的，因为我还没读完（逃跑~）。等再发现新的值得一聊的，并且能凑够一篇文章的内容的话，我会再继续写一篇的。">
 
 
 
@@ -114,10 +114,10 @@
 
 
 
-  <link rel="canonical" href="http://sheldong.space/2016/10/20/oneframe-design/"/>
+  <link rel="canonical" href="http://sheldong.space/2017/05/13/codeigniter-4-reader-05-different-3-x/"/>
 
 
-  <title> oneframe 设计 v0.1版 | 飞翔猴子 </title>
+  <title> Codeigniter 4.0-dev 版源码学习笔记之五——相对于 3.x 的变化 | 飞翔猴子 </title>
 </head>
 
 <body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
@@ -257,7 +257,7 @@
             
             
               
-                oneframe 设计 v0.1版
+                Codeigniter 4.0-dev 版源码学习笔记之五——相对于 3.x 的变化
               
             
           </h1>
@@ -269,19 +269,38 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-10-20T14:10:55+08:00" content="2016-10-20">
-              2016-10-20
+            <time itemprop="dateCreated" datetime="2017-05-13T19:21:50+08:00" content="2017-05-13">
+              2017-05-13
             </time>
           </span>
 
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Codeigniter-源码/" itemprop="url" rel="index">
+                    <span itemprop="name">Codeigniter 源码</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
           
 
           
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/10/20/oneframe-design/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/20/oneframe-design/" itemprop="commentsCount"></span>
+                <a href="/2017/05/13/codeigniter-4-reader-05-different-3-x/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/05/13/codeigniter-4-reader-05-different-3-x/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -291,7 +310,7 @@
 
           
           
-             <span id="/2016/10/20/oneframe-design/" class="leancloud_visitors" data-flag-title="oneframe 设计 v0.1版">
+             <span id="/2017/05/13/codeigniter-4-reader-05-different-3-x/" class="leancloud_visitors" data-flag-title="Codeigniter 4.0-dev 版源码学习笔记之五——相对于 3.x 的变化">
                &nbsp; | &nbsp;
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -313,29 +332,29 @@
       
 
       
-        <p>oneframe 是我自己学习各种框架时练手的一个项目，目的仅仅是加深对各种框架的设计思路的理解。</p>
-<a id="more"></a>
-<h2 id="整体构架"><a href="#整体构架" class="headerlink" title="整体构架"></a>整体构架</h2><ol>
-<li>采用单一入口为index.php 。</li>
-<li>两个目录，一个目录定义为sys,主要放置框架核心文件；一个目录定义为app,默认情况下预定义三个空目录为c,m,v分别放置控制器，模型，视图，也可以自定义目录，用于放置其他类，如完成逻辑层的service或者公用类等，这些类可通过类加载方式加载进去；另还有config.php文件用于添加修改框架的配置数据。定义为sys的文件夹原则上是不需要修改的文件，定义为app的文件夹是开发人员主要使用的目录。</li>
-<li>系统流程参见下方的“基本流程”。</li>
-<li>系统定义的各种类如数据库操作类等，可通过load的方式加载进来。</li>
-</ol>
-<h2 id="基本流程"><a href="#基本流程" class="headerlink" title="基本流程"></a>基本流程</h2><ol>
-<li>使用单一入口，入口文件名为index.php 。</li>
-<li>进入入口文件后，首先加载common类，common是一些公用的方法。</li>
-<li>加载配置类。</li>
-<li>加载URL处理类，处理结果是找到控制器目录以及代表控制器的类和方法。</li>
-<li>加载路由类，负责处理是否有自定义路由。</li>
-<li>加载input类，主要处理$_GET,$_POST数据。</li>
-<li>加载ouput类，负责生成返回的html字符串，并且检测是否需要处理缓存问题。</li>
-<li>输出</li>
-</ol>
-<h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><ol>
-<li>在此版完成的后应考虑增加安全类，负责处理用户的输入数据。</li>
-<li>是否考虑增加挂钩点，用于后期增加扩展使用。</li>
-<li>是否需要增加系统基准测试类,能够用来计算两个标记点的时间差。</li>
-</ol>
+        <h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>CI 为了追上“大家”的脚步，这次跨了一大步，尽量使用了更多的流行设计理念，甚至连 PHP 的支持版本都是从 7 开始起步的。我在之前阅读源码的同时也发现了很多变化的地方，在此把已经发现的列举出来，不过肯定是不全的，因为我还没读完（逃跑~）。等再发现新的值得一聊的，并且能凑够一篇文章的内容的话，我会再继续写一篇的。</p>
+<h4 id="支持命名空间"><a href="#支持命名空间" class="headerlink" title="支持命名空间"></a>支持命名空间</h4><p>CI 3 是没有支持命名空间的。导致有些人相加一层 service 的话是借助 model 或者是 library 实现的，用起来总是不伦不类。不知道有多少等 CI 4 ，其中有部分原因就是等它支持命名空间呢。</p>
+<h4 id="更好的支持-Composer"><a href="#更好的支持-Composer" class="headerlink" title="更好的支持 Composer"></a>更好的支持 Composer</h4><p>之前的版本，虽然支持了 Composer ，但是因为不支持命名空间，导致不能发挥 composer 的全部功力。于是大部分人依旧是去官网下了 zip 包，解压后吭哧吭哧自己造轮子。新版本应该能够很好的发挥 Composer 的功效了， packages 上的各种组件随便用了。</p>
+<h4 id="view-不再是-load-进来的了"><a href="#view-不再是-load-进来的了" class="headerlink" title="view 不再是 load 进来的了"></a>view 不再是 load 进来的了</h4><p>之前，我们要处理 view 的话，要使用load-&gt;view 感觉上 controller 是主体， view 是被加载进来的。 CI 4 中 view 处理完毕后仅仅是个字符串，要在 controller 里 return 会核心里，由核心再处理输出，这样整个流程就更清晰了。</p>
+<h4 id="代码和资源文件分离了"><a href="#代码和资源文件分离了" class="headerlink" title="代码和资源文件分离了"></a>代码和资源文件分离了</h4><p>新的代码组织方式要求将 web 站点根目录指向到 public 目录， public 目录仅仅一个入口文件以及静态的图片和 CSS 资源等，代码文件都在上一级目录中分布，这不仅可以使 web 目录更加简洁清晰，同时也能增加一些安全性。</p>
+<h4 id="配置文件不再是简单数组了"><a href="#配置文件不再是简单数组了" class="headerlink" title="配置文件不再是简单数组了"></a>配置文件不再是简单数组了</h4><p>新的配置文件是以对象组织的，各个配置以对象的属性形式暴露出来。</p>
+<h4 id="路由变化"><a href="#路由变化" class="headerlink" title="路由变化"></a>路由变化</h4><h5 id="增加闭包形式定义路由"><a href="#增加闭包形式定义路由" class="headerlink" title="增加闭包形式定义路由"></a>增加闭包形式定义路由</h5><p>可以用闭包形式直接定义一个简单的路由，此路由可以不对应 controller ，举例如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">$routes-&gt;add(&apos;feed&apos;, function()</div><div class="line">   &#123;</div><div class="line">        return &apos;Simple Hello World.&apos;;</div><div class="line">    &#123;</div><div class="line">);</div></pre></td></tr></table></figure>
+<h5 id="可以定义路由组"><a href="#可以定义路由组" class="headerlink" title="可以定义路由组"></a>可以定义路由组</h5><p>如果某一批路径有着相似的前缀，可以使用路由组，如后台程序，通常喜欢给每个路由前边都加上一个 admin 用于区分后台于前台的页面路径。此时可以如下定义：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">$routes-&gt;group(&apos;admin&apos;, function($routes)</div><div class="line">&#123;</div><div class="line">    $routes-&gt;add(&apos;users&apos;, &apos;Admin\Users::index&apos;);</div><div class="line">    $routes-&gt;add(&apos;blogs&apos;,  &apos;Admin\Blogs::index&apos;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>相当于定义了 admin/users 、 admin/blogs 两个路由。</p>
+<h5 id="可以直接定义-RESTful-形式路由"><a href="#可以直接定义-RESTful-形式路由" class="headerlink" title="可以直接定义 RESTful 形式路由"></a>可以直接定义 RESTful 形式路由</h5><p>可以很方便以以下形式定义此类型路由：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">$routes-&gt;resource(&apos;users&apos;);</div><div class="line"></div><div class="line">// 以上形式等价于:</div><div class="line">$routes-&gt;get(&apos;users&apos;,               &apos;Users::listAll&apos;);</div><div class="line">$routes-&gt;get(&apos;users/(:segment)&apos;,    &apos;Users::show/$1&apos;);</div><div class="line">$routes-&gt;post(&apos;users&apos;,              &apos;Users::create&apos;);</div><div class="line">$routes-&gt;put(&apos;users/(:segment)&apos;,    &apos;Users::update/$1&apos;);</div><div class="line">$routes-&gt;delete(&apos;users/(:segment)&apos;, &apos;Users::delete/$1&apos;);</div></pre></td></tr></table></figure>
+<p>当然，浏览器不能直接处理 put 等形式请求，需要借助 post 并加一个 _method 的隐藏域来完成。</p>
+<h5 id="关闭自动路由"><a href="#关闭自动路由" class="headerlink" title="关闭自动路由"></a>关闭自动路由</h5><p>可以像 Laravel 一样仅识别已经配置的路由，关闭后，处理完配置路由后如还没有发现匹配控制器将不会再继续按着约定去自动寻找控制器文件。设置方法如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$routes-&gt;setAutoRoute(false);</div></pre></td></tr></table></figure>
+<h4 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h4><p>以上是目前发现的其中一部分变化，其实 CI 4 变化还是比较大的。我在查看一部分源码后感觉有了很多 Laravel 的影子，或者说是现在比较流行的框架设计的思路。以后在后续的阅读过程中发现更多的有趣变化，我会继续摘录分享。</p>
+<hr>
+<blockquote>
+<p>此文可以转载，但转载前需要发邮件到imustgxd*sina.cn进行沟通，未沟通的均视作侵权。<br><a href="http://sheldong.space/2017/05/13/codeigniter-4-reader-05-different-3-x">http://sheldong.space/2017/05/13/codeigniter-4-reader-05-different-3-x</a></p>
+</blockquote>
+<hr>
+<p><strong>如有错误或者不明白的地方，请在下方评论，我会尽快回复并及时更新教程，感谢！</strong></p>
 
       
     </div>
@@ -356,21 +375,27 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/Codeigniter/" rel="tag">#Codeigniter</a>
+          
+        </div>
+      
 
       
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/10/20/netty-websocket-chatroom/" rel="next" title="使用netty基于websocket做一个聊天室">
-                <i class="fa fa-chevron-left"></i> 使用netty基于websocket做一个聊天室
+              <a href="/2017/05/13/codeigniter-4-reader-04-route/" rel="next" title="Codeigniter 4.0-dev 版源码学习笔记之四——详细路由过程">
+                <i class="fa fa-chevron-left"></i> Codeigniter 4.0-dev 版源码学习笔记之四——详细路由过程
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/10/20/mysql-json-functions/" rel="prev" title="MySQL 5.7 新增加的JSON特性对应的json方法">
-                MySQL 5.7 新增加的JSON特性对应的json方法 <i class="fa fa-chevron-right"></i>
+              <a href="/2017/05/15/codeigniter-4-reader-06-controller/" rel="prev" title="Codeigniter 4.0-dev 版源码学习笔记之六——控制器">
+                Codeigniter 4.0-dev 版源码学习笔记之六——控制器 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -515,7 +540,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#整体构架"><span class="nav-number">1.</span> <span class="nav-text">整体构架</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基本流程"><span class="nav-number">2.</span> <span class="nav-text">基本流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#补充"><span class="nav-number">3.</span> <span class="nav-text">补充</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#支持命名空间"><span class="nav-number">2.</span> <span class="nav-text">支持命名空间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#更好的支持-Composer"><span class="nav-number">3.</span> <span class="nav-text">更好的支持 Composer</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#view-不再是-load-进来的了"><span class="nav-number">4.</span> <span class="nav-text">view 不再是 load 进来的了</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码和资源文件分离了"><span class="nav-number">5.</span> <span class="nav-text">代码和资源文件分离了</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配置文件不再是简单数组了"><span class="nav-number">6.</span> <span class="nav-text">配置文件不再是简单数组了</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#路由变化"><span class="nav-number">7.</span> <span class="nav-text">路由变化</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#增加闭包形式定义路由"><span class="nav-number">7.1.</span> <span class="nav-text">增加闭包形式定义路由</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#可以定义路由组"><span class="nav-number">7.2.</span> <span class="nav-text">可以定义路由组</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#可以直接定义-RESTful-形式路由"><span class="nav-number">7.3.</span> <span class="nav-text">可以直接定义 RESTful 形式路由</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#关闭自动路由"><span class="nav-number">7.4.</span> <span class="nav-text">关闭自动路由</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#小结"><span class="nav-number">8.</span> <span class="nav-text">小结</span></a></li></ol></div>
             
           </div>
         </section>

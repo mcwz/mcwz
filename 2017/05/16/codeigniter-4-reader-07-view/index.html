@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="oneframe,PHP框架,框架设计" />
+  <meta name="keywords" content="Codeigniter" />
 
 
 
@@ -84,16 +84,19 @@
 
 
 
-<meta name="description" content="oneframe 是我自己学习各种框架时练手的一个项目，目的仅仅是加深对各种框架的设计思路的理解。">
+<meta name="description" content="CI 的 View 没有像 Laravel 等一些流行框架一样设计的那么重，有自己的一套模版机制，CI 一直采用纯天然的 PHP 模板形式，纯天然的好处是不用再学习一套模板语言了，缺点是不能用到一些便利的设计模式，比如不能使用继承布局等等，当然你也可以加第三方的视图组件进来。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="oneframe 设计 v0.1版">
-<meta property="og:url" content="http://sheldong.space/2016/10/20/oneframe-design/index.html">
+<meta property="og:title" content="Codeigniter 4.0-dev 版源码学习笔记之七—— View 视图">
+<meta property="og:url" content="http://sheldong.space/2017/05/16/codeigniter-4-reader-07-view/index.html">
 <meta property="og:site_name" content="飞翔猴子">
-<meta property="og:description" content="oneframe 是我自己学习各种框架时练手的一个项目，目的仅仅是加深对各种框架的设计思路的理解。">
-<meta property="og:updated_time" content="2016-10-21T02:05:14.802Z">
+<meta property="og:description" content="CI 的 View 没有像 Laravel 等一些流行框架一样设计的那么重，有自己的一套模版机制，CI 一直采用纯天然的 PHP 模板形式，纯天然的好处是不用再学习一套模板语言了，缺点是不能用到一些便利的设计模式，比如不能使用继承布局等等，当然你也可以加第三方的视图组件进来。">
+<meta property="og:image" content="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/FF466452FA664766A9A4F94DA49AC9F6/8184">
+<meta property="og:image" content="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/1E3C8C4E4464482D9AC8AFE6BEE6C887/8215">
+<meta property="og:updated_time" content="2017-05-17T09:19:33.468Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="oneframe 设计 v0.1版">
-<meta name="twitter:description" content="oneframe 是我自己学习各种框架时练手的一个项目，目的仅仅是加深对各种框架的设计思路的理解。">
+<meta name="twitter:title" content="Codeigniter 4.0-dev 版源码学习笔记之七—— View 视图">
+<meta name="twitter:description" content="CI 的 View 没有像 Laravel 等一些流行框架一样设计的那么重，有自己的一套模版机制，CI 一直采用纯天然的 PHP 模板形式，纯天然的好处是不用再学习一套模板语言了，缺点是不能用到一些便利的设计模式，比如不能使用继承布局等等，当然你也可以加第三方的视图组件进来。">
+<meta name="twitter:image" content="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/FF466452FA664766A9A4F94DA49AC9F6/8184">
 
 
 
@@ -114,10 +117,10 @@
 
 
 
-  <link rel="canonical" href="http://sheldong.space/2016/10/20/oneframe-design/"/>
+  <link rel="canonical" href="http://sheldong.space/2017/05/16/codeigniter-4-reader-07-view/"/>
 
 
-  <title> oneframe 设计 v0.1版 | 飞翔猴子 </title>
+  <title> Codeigniter 4.0-dev 版源码学习笔记之七—— View 视图 | 飞翔猴子 </title>
 </head>
 
 <body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
@@ -257,7 +260,7 @@
             
             
               
-                oneframe 设计 v0.1版
+                Codeigniter 4.0-dev 版源码学习笔记之七—— View 视图
               
             
           </h1>
@@ -269,8 +272,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-10-20T14:10:55+08:00" content="2016-10-20">
-              2016-10-20
+            <time itemprop="dateCreated" datetime="2017-05-16T08:11:52+08:00" content="2017-05-16">
+              2017-05-16
             </time>
           </span>
 
@@ -280,8 +283,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/10/20/oneframe-design/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/20/oneframe-design/" itemprop="commentsCount"></span>
+                <a href="/2017/05/16/codeigniter-4-reader-07-view/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/05/16/codeigniter-4-reader-07-view/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -291,7 +294,7 @@
 
           
           
-             <span id="/2016/10/20/oneframe-design/" class="leancloud_visitors" data-flag-title="oneframe 设计 v0.1版">
+             <span id="/2017/05/16/codeigniter-4-reader-07-view/" class="leancloud_visitors" data-flag-title="Codeigniter 4.0-dev 版源码学习笔记之七—— View 视图">
                &nbsp; | &nbsp;
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -313,29 +316,45 @@
       
 
       
-        <p>oneframe 是我自己学习各种框架时练手的一个项目，目的仅仅是加深对各种框架的设计思路的理解。</p>
-<a id="more"></a>
-<h2 id="整体构架"><a href="#整体构架" class="headerlink" title="整体构架"></a>整体构架</h2><ol>
-<li>采用单一入口为index.php 。</li>
-<li>两个目录，一个目录定义为sys,主要放置框架核心文件；一个目录定义为app,默认情况下预定义三个空目录为c,m,v分别放置控制器，模型，视图，也可以自定义目录，用于放置其他类，如完成逻辑层的service或者公用类等，这些类可通过类加载方式加载进去；另还有config.php文件用于添加修改框架的配置数据。定义为sys的文件夹原则上是不需要修改的文件，定义为app的文件夹是开发人员主要使用的目录。</li>
-<li>系统流程参见下方的“基本流程”。</li>
-<li>系统定义的各种类如数据库操作类等，可通过load的方式加载进来。</li>
+        <h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>CI 的 View 没有像 Laravel 等一些流行框架一样设计的那么重，有自己的一套模版机制，CI 一直采用纯天然的 PHP 模板形式，纯天然的好处是不用再学习一套模板语言了，缺点是不能用到一些便利的设计模式，比如不能使用继承布局等等，当然你也可以加第三方的视图组件进来。</p>
+<p>下面我们开始看源码，看源码，我们先从视图的调用开始。</p>
+<h4 id="视图的调用"><a href="#视图的调用" class="headerlink" title="视图的调用"></a>视图的调用</h4><p>CI 4 开始使用新的视图调用逻辑，不在是 load 形式，调用方式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">echo view(&apos;name&apos;);</div></pre></td></tr></table></figure>
+<p>可以看到是直接调用了一个 view 函数，这个函数我们既不需要提前 load ， 在 construct 方法里也没看见 include 什么文件，同时，这个方法看起来又不属于控制器对象，那么它是从哪里来的呢？</p>
+<p>回到之前写的“之二——入口以及初始化操作”一节，里面提到了，在 bootstrap.php 74 行（原始文件行号）， require 了一下 BASEPATH.’Common.php’ ，这个文件中定义了许多辅助方法。 view 就是其中一个，该方法位于 system/common.php 中的 88 行（原始文件行号）。下面把代码贴出来：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">if (! function_exists(&apos;view&apos;))</div><div class="line">&#123;</div><div class="line">	function view(string $name, array $data = [], array $options = [])</div><div class="line">	&#123;</div><div class="line">		$renderer = Services::renderer();</div><div class="line">		$saveData = null;</div><div class="line">		if (array_key_exists(&apos;saveData&apos;, $options) &amp;&amp; $options[&apos;saveData&apos;] === true)</div><div class="line">		&#123;</div><div class="line">			$saveData = (bool)$options[&apos;saveData&apos;];</div><div class="line">			unset($options[&apos;saveData&apos;]);</div><div class="line">		&#125;</div><div class="line">		return $renderer-&gt;setData($data, &apos;raw&apos;)</div><div class="line">		                -&gt;render($name, $options, $saveData);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可以看到，这里调用了 Services 类的 renderer 静态方法。之后的 saveData 逻辑主要处理多次调用 view 方法时是否共享视图变量以及最后把要传递给视图的数据变量通过 $renderer-&gt;setData 方法传递给 render ，最后又执行了 render 进行渲染视图。下面贴出的是 Services::renderer() 源码（system/config/services.php:362）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">public static function renderer($viewPath = APPPATH.&apos;Views/&apos;, $config = null, $getShared = true)</div><div class="line">&#123;</div><div class="line">	if ($getShared)</div><div class="line">	&#123;</div><div class="line">		return self::getSharedInstance(&apos;renderer&apos;, $viewPath, $config);</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	if (is_null($config))</div><div class="line">	&#123;</div><div class="line">		$config = new \Config\View();</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	return new \CodeIgniter\View\View($config, $viewPath, self::locator(true), CI_DEBUG, self::logger(true));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可以看出， view 方法主要 new 了一个 \CodeIgniter\View\View 类，该类位于 /system/View\View.php 下。</p>
+<p>小结一下，给个分析过程图，以方便理解：</p>
+<p><img src="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/FF466452FA664766A9A4F94DA49AC9F6/8184" alt="视图分析过程图"></p>
+<p>接下来就是我们的主角 View 了。</p>
+<h4 id="View-源码分析"><a href="#View-源码分析" class="headerlink" title="View 源码分析"></a>View 源码分析</h4><p>按着以上图中流程，我们要看 View 类的三个关键方法，分别是 __construct 、 setData 、 render 。</p>
+<h5 id="construct-方法"><a href="#construct-方法" class="headerlink" title="__construct 方法"></a>__construct 方法</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">public function __construct($config, string $viewPath = null, $loader = null, bool $debug = null, Logger $logger = null)</div><div class="line">&#123;</div><div class="line">	$this-&gt;config   = $config;</div><div class="line">	$this-&gt;viewPath = rtrim($viewPath, &apos;/ &apos;).&apos;/&apos;;</div><div class="line">	$this-&gt;loader   = is_null($loader) ? Services::locator() : $loader;</div><div class="line">	$this-&gt;logger   = is_null($logger) ? Services::logger() : $logger;</div><div class="line">	$this-&gt;debug    = is_null($debug) ? CI_DEBUG : $debug;</div><div class="line">	$this-&gt;saveData = $config-&gt;saveData ?? null;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可以看到在 services new 的时候，仅仅传递了配置信息以及视图路径，视图数据不在初始化之列。</p>
+<h5 id="setData-方法"><a href="#setData-方法" class="headerlink" title="setData 方法"></a>setData 方法</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">public function setData(array $data=[], string $context=null): RendererInterface</div><div class="line">&#123;</div><div class="line">	if ( ! empty($context))</div><div class="line">	&#123;</div><div class="line">		$data = \esc($data, $context);</div><div class="line">	&#125;</div><div class="line">	$this-&gt;data = array_merge($this-&gt;data, $data);</div><div class="line">	return $this;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>此方法主要用途是往视图里压数据，实际上就是把新压的数据和对象中原有的数据（数据）合并一下。</p>
+<h5 id="render-方法"><a href="#render-方法" class="headerlink" title="render 方法"></a>render 方法</h5><p>作为视图逻辑，渲染视图肯定是一个重中之重的过程。 </p>
+<p>以下是去掉注释和空行的源码截图（源码分析中涉及到的行号是截图中的行号）：</p>
+<p><img src="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/1E3C8C4E4464482D9AC8AFE6BEE6C887/8215" alt="view类的render方法"></p>
+<ol>
+<li>142 行：由参数可以看出，调用 render 方法时才把具体的视图文件名传递进来，因视图数据通过 setData 方法放到了当前对象的 data 属性里，因此无需再次传递。</li>
+<li>145-147,170-172 行，处理是否将本次压进来的视图数据共享给下次 render 过程。这个 $saveData 可以在  application/config/view.php 里配置，默认是 false 。</li>
+<li>149 行：处理视图文件名后缀。</li>
+<li>150-158 行，判断开始缓存设置的话，处理视图缓存。</li>
+<li>159-168 行，尝试着通过自动加载机制找到视图文件。找不到，抛异常。</li>
+<li>168 行，很重要（<strong>划重点</strong>），该方法是将压进来的数组形式的数据扩展开成 $key=$value 形式，因为视图是 include 进来的普通 php 因此，在视图中也就可以用 $key 的形式读取到变量的内容。</li>
+<li>174-177 行，开启输出控制缓冲机制，并 include 进来视图，相当于同时执行了这个文件，这个文件中的普通 html 亦或是执行 php 后的输出，都会被输出缓冲接收到并赋值给了 $output 。</li>
+<li>179-182 行，前边的缓存是处理读取过程，这里是处理写入过程。</li>
+<li>183 行，最后返回渲染结果。</li>
 </ol>
-<h2 id="基本流程"><a href="#基本流程" class="headerlink" title="基本流程"></a>基本流程</h2><ol>
-<li>使用单一入口，入口文件名为index.php 。</li>
-<li>进入入口文件后，首先加载common类，common是一些公用的方法。</li>
-<li>加载配置类。</li>
-<li>加载URL处理类，处理结果是找到控制器目录以及代表控制器的类和方法。</li>
-<li>加载路由类，负责处理是否有自定义路由。</li>
-<li>加载input类，主要处理$_GET,$_POST数据。</li>
-<li>加载ouput类，负责生成返回的html字符串，并且检测是否需要处理缓存问题。</li>
-<li>输出</li>
-</ol>
-<h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><ol>
-<li>在此版完成的后应考虑增加安全类，负责处理用户的输入数据。</li>
-<li>是否考虑增加挂钩点，用于后期增加扩展使用。</li>
-<li>是否需要增加系统基准测试类,能够用来计算两个标记点的时间差。</li>
-</ol>
+<h4 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h4><p>从源码上看， CI 使用了原始 PHP 作为模版机制使得视图逻辑非常简单。无非也就是把视图 include 进来，用输出缓冲把执行结果拿到即可。</p>
+<hr>
+<blockquote>
+<p>此文可以转载，但转载前需要发邮件到imustgxd*sina.cn进行沟通，未沟通的均视作侵权。<br><a href="http://sheldong.space/2017/05/16/codeigniter-4-reader-07-view">http://sheldong.space/2017/05/16/codeigniter-4-reader-07-view</a></p>
+</blockquote>
+<hr>
+<p><strong>如有错误或者不明白的地方，请在下方评论，我会尽快回复并及时更新教程，感谢！</strong></p>
 
       
     </div>
@@ -356,22 +375,24 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/Codeigniter/" rel="tag">#Codeigniter</a>
+          
+        </div>
+      
 
       
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/10/20/netty-websocket-chatroom/" rel="next" title="使用netty基于websocket做一个聊天室">
-                <i class="fa fa-chevron-left"></i> 使用netty基于websocket做一个聊天室
+              <a href="/2017/05/15/codeigniter-4-reader-06-controller/" rel="next" title="Codeigniter 4.0-dev 版源码学习笔记之六——控制器">
+                <i class="fa fa-chevron-left"></i> Codeigniter 4.0-dev 版源码学习笔记之六——控制器
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/10/20/mysql-json-functions/" rel="prev" title="MySQL 5.7 新增加的JSON特性对应的json方法">
-                MySQL 5.7 新增加的JSON特性对应的json方法 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -515,7 +536,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#整体构架"><span class="nav-number">1.</span> <span class="nav-text">整体构架</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基本流程"><span class="nav-number">2.</span> <span class="nav-text">基本流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#补充"><span class="nav-number">3.</span> <span class="nav-text">补充</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#视图的调用"><span class="nav-number">2.</span> <span class="nav-text">视图的调用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#View-源码分析"><span class="nav-number">3.</span> <span class="nav-text">View 源码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#construct-方法"><span class="nav-number">3.1.</span> <span class="nav-text">__construct 方法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#setData-方法"><span class="nav-number">3.2.</span> <span class="nav-text">setData 方法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#render-方法"><span class="nav-number">3.3.</span> <span class="nav-text">render 方法</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#结语"><span class="nav-number">4.</span> <span class="nav-text">结语</span></a></li></ol></div>
             
           </div>
         </section>

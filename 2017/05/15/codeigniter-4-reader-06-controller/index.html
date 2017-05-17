@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="oneframe,PHP框架,框架设计" />
+  <meta name="keywords" content="Codeigniter" />
 
 
 
@@ -84,16 +84,19 @@
 
 
 
-<meta name="description" content="oneframe 是我自己学习各种框架时练手的一个项目，目的仅仅是加深对各种框架的设计思路的理解。">
+<meta name="description" content="其实一开始我是很纠结是否要写控制器的源码分析的，因为控制器的源码太少了，少到你不相信这是一个 MVC 里的一个重头。直觉里，大家都觉得控制器作为各个请求的“入口”，其后端应该有很多很多的代码支撑才可以的，然而事实相反，去掉注释后，一共才 60 行左右。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="oneframe 设计 v0.1版">
-<meta property="og:url" content="http://sheldong.space/2016/10/20/oneframe-design/index.html">
+<meta property="og:title" content="Codeigniter 4.0-dev 版源码学习笔记之六——控制器">
+<meta property="og:url" content="http://sheldong.space/2017/05/15/codeigniter-4-reader-06-controller/index.html">
 <meta property="og:site_name" content="飞翔猴子">
-<meta property="og:description" content="oneframe 是我自己学习各种框架时练手的一个项目，目的仅仅是加深对各种框架的设计思路的理解。">
-<meta property="og:updated_time" content="2016-10-21T02:05:14.802Z">
+<meta property="og:description" content="其实一开始我是很纠结是否要写控制器的源码分析的，因为控制器的源码太少了，少到你不相信这是一个 MVC 里的一个重头。直觉里，大家都觉得控制器作为各个请求的“入口”，其后端应该有很多很多的代码支撑才可以的，然而事实相反，去掉注释后，一共才 60 行左右。">
+<meta property="og:image" content="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/8F0B46D998DD45D6A58544282BBD2B13/7989">
+<meta property="og:image" content="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/8EC1B58BFA8E4778805A1FACFDD46E6C/7983">
+<meta property="og:updated_time" content="2017-05-17T09:17:42.719Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="oneframe 设计 v0.1版">
-<meta name="twitter:description" content="oneframe 是我自己学习各种框架时练手的一个项目，目的仅仅是加深对各种框架的设计思路的理解。">
+<meta name="twitter:title" content="Codeigniter 4.0-dev 版源码学习笔记之六——控制器">
+<meta name="twitter:description" content="其实一开始我是很纠结是否要写控制器的源码分析的，因为控制器的源码太少了，少到你不相信这是一个 MVC 里的一个重头。直觉里，大家都觉得控制器作为各个请求的“入口”，其后端应该有很多很多的代码支撑才可以的，然而事实相反，去掉注释后，一共才 60 行左右。">
+<meta name="twitter:image" content="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/8F0B46D998DD45D6A58544282BBD2B13/7989">
 
 
 
@@ -114,10 +117,10 @@
 
 
 
-  <link rel="canonical" href="http://sheldong.space/2016/10/20/oneframe-design/"/>
+  <link rel="canonical" href="http://sheldong.space/2017/05/15/codeigniter-4-reader-06-controller/"/>
 
 
-  <title> oneframe 设计 v0.1版 | 飞翔猴子 </title>
+  <title> Codeigniter 4.0-dev 版源码学习笔记之六——控制器 | 飞翔猴子 </title>
 </head>
 
 <body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
@@ -257,7 +260,7 @@
             
             
               
-                oneframe 设计 v0.1版
+                Codeigniter 4.0-dev 版源码学习笔记之六——控制器
               
             
           </h1>
@@ -269,19 +272,38 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-10-20T14:10:55+08:00" content="2016-10-20">
-              2016-10-20
+            <time itemprop="dateCreated" datetime="2017-05-15T08:21:50+08:00" content="2017-05-15">
+              2017-05-15
             </time>
           </span>
 
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Codeigniter-源码/" itemprop="url" rel="index">
+                    <span itemprop="name">Codeigniter 源码</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
           
 
           
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/10/20/oneframe-design/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/20/oneframe-design/" itemprop="commentsCount"></span>
+                <a href="/2017/05/15/codeigniter-4-reader-06-controller/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/05/15/codeigniter-4-reader-06-controller/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -291,7 +313,7 @@
 
           
           
-             <span id="/2016/10/20/oneframe-design/" class="leancloud_visitors" data-flag-title="oneframe 设计 v0.1版">
+             <span id="/2017/05/15/codeigniter-4-reader-06-controller/" class="leancloud_visitors" data-flag-title="Codeigniter 4.0-dev 版源码学习笔记之六——控制器">
                &nbsp; | &nbsp;
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -313,29 +335,30 @@
       
 
       
-        <p>oneframe 是我自己学习各种框架时练手的一个项目，目的仅仅是加深对各种框架的设计思路的理解。</p>
-<a id="more"></a>
-<h2 id="整体构架"><a href="#整体构架" class="headerlink" title="整体构架"></a>整体构架</h2><ol>
-<li>采用单一入口为index.php 。</li>
-<li>两个目录，一个目录定义为sys,主要放置框架核心文件；一个目录定义为app,默认情况下预定义三个空目录为c,m,v分别放置控制器，模型，视图，也可以自定义目录，用于放置其他类，如完成逻辑层的service或者公用类等，这些类可通过类加载方式加载进去；另还有config.php文件用于添加修改框架的配置数据。定义为sys的文件夹原则上是不需要修改的文件，定义为app的文件夹是开发人员主要使用的目录。</li>
-<li>系统流程参见下方的“基本流程”。</li>
-<li>系统定义的各种类如数据库操作类等，可通过load的方式加载进来。</li>
+        <h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>其实一开始我是很纠结是否要写控制器的源码分析的，因为控制器的源码太少了，少到你不相信这是一个 MVC 里的一个重头。直觉里，大家都觉得控制器作为各个请求的“入口”，其后端应该有很多很多的代码支撑才可以的，然而事实相反，去掉注释后，一共才 60 行左右。</p>
+<h4 id="控制器之前"><a href="#控制器之前" class="headerlink" title="控制器之前"></a>控制器之前</h4><p>看控制器源码之前，我们还是要回顾一下，控制器是怎么来的。</p>
+<p><img src="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/8F0B46D998DD45D6A58544282BBD2B13/7989" alt="Controller 创建源码截图"></p>
+<p>请大家看截图，截图中有两个方法：分别是 createController 和 runController。</p>
+<p><strong>createController</strong> 负责把路由找到的 controller 类实例化。实例化时，可以看到 request 和 response 作为参数传递给了 controller 的构造方法，这也是为什么在定义 controller 时，如果定义了 <strong>construct 方法一定要记得调用一下 parent::</strong>construct() ,因为默认定义了 <strong>construct 方法后会覆盖了父类的 </strong>construct ，所以必须明确调用父类构造方法才能执行。</p>
+<p><strong>runController</strong> 是执行控制器过程，大致思路就是把刚刚实例话的对象拿过来，执行路由中找到的控制器方法。并且把输出返回。</p>
+<h4 id="控制器"><a href="#控制器" class="headerlink" title="控制器"></a>控制器</h4><p><img src="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/8EC1B58BFA8E4778805A1FACFDD46E6C/7983" alt="控制器源码截图"></p>
+<p>严格来说，这个是控制器父类的源码。为控制器运行期间定义了一些常用的方法，如 post 参数验证，缓存等。下面具体说一下：</p>
+<ol>
+<li>11-16 行：控制器父类的属性，这些属性可以定义控制器本身的状态。可以在自己定义的类中覆盖掉这些属性。 helpers 定义要加载的辅助方法，forceHTTPS 大于 0 时，可以指定当前设定值期间内强制到 https 。 validator 定义要验证的 post 内容的规则。</li>
+<li>18-29 行：控制器父类的构造方法，在定义控制器时如果没定义自己的构造方法，这个方法会被默认执行，如果定义过将会覆盖掉这个方法，需要在构造方法的最前边执行 parent::__construct() 以保证这个方法中的初始化数据都能正常初始化。其中 forceHTTPS 方法是强制使用 https 协议，loadHelpers 可以默认自动加载需要的 helper 。</li>
+<li>51-60 行： validate 方法，主要辅助验证 post 请求过来的各个字段。形式如下：</li>
 </ol>
-<h2 id="基本流程"><a href="#基本流程" class="headerlink" title="基本流程"></a>基本流程</h2><ol>
-<li>使用单一入口，入口文件名为index.php 。</li>
-<li>进入入口文件后，首先加载common类，common是一些公用的方法。</li>
-<li>加载配置类。</li>
-<li>加载URL处理类，处理结果是找到控制器目录以及代表控制器的类和方法。</li>
-<li>加载路由类，负责处理是否有自定义路由。</li>
-<li>加载input类，主要处理$_GET,$_POST数据。</li>
-<li>加载ouput类，负责生成返回的html字符串，并且检测是否需要处理缓存问题。</li>
-<li>输出</li>
-</ol>
-<h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><ol>
-<li>在此版完成的后应考虑增加安全类，负责处理用户的输入数据。</li>
-<li>是否考虑增加挂钩点，用于后期增加扩展使用。</li>
-<li>是否需要增加系统基准测试类,能够用来计算两个标记点的时间差。</li>
-</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">if (! $this-&gt;validate($this-&gt;request, [</div><div class="line">    &apos;email&apos; =&gt; &quot;required|is_unique[users.email,id,&#123;$userID&#125;]&quot;,</div><div class="line">    &apos;name&apos; =&gt; &apos;required|alpha_numeric_spaces&apos;</div><div class="line">]))</div><div class="line">&#123;</div><div class="line">    return view(&apos;users/update&apos;, [</div><div class="line">        &apos;errors&apos; =&gt; $this-&gt;errors</div><div class="line">    ]);</div><div class="line">&#125;</div><div class="line"></div><div class="line">// do something here if successful...</div></pre></td></tr></table></figure>
+<p>以上源码截取自 CI 4 官方手册。如果觉得验证规则那个比较乱的话，可以在 Config\Validation.php 中自定义一个验证组，并用以下方式验证：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$this-&gt;validate($this-&gt;request, &apos;userRules&apos;)</div></pre></td></tr></table></figure>
+<h4 id="控制器之后"><a href="#控制器之后" class="headerlink" title="控制器之后"></a>控制器之后</h4><p>我们都知道，控制器会和 view 端交互，在之前的 CI 版本中，控制器会把 view load 进自己的生命周期中，直接处理 request 信息。个人也觉得这有些把 controller 的地位看得太重了。在 CI 4 中，控制器仅负责接到 view 返回的组装的页面字符串，并 return 回 codeigniter 核心中，由核心再处理后续事宜。</p>
+<h4 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h4><p>本节简单的说了说控制器的父类，源码比较少，说的也就不多。下一节试着说说 view 。</p>
+<hr>
+<blockquote>
+<p>此文可以转载，但转载前需要发邮件到imustgxd*sina.cn进行沟通，未沟通的均视作侵权。<br><a href="http://sheldong.space/2017/05/15/codeigniter-4-reader-06-controller">http://sheldong.space/2017/05/15/codeigniter-4-reader-06-controller</a></p>
+</blockquote>
+<hr>
+<p><strong>如有错误或者不明白的地方，请在下方评论，我会尽快回复并及时更新教程，感谢！</strong></p>
 
       
     </div>
@@ -356,21 +379,27 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/Codeigniter/" rel="tag">#Codeigniter</a>
+          
+        </div>
+      
 
       
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/10/20/netty-websocket-chatroom/" rel="next" title="使用netty基于websocket做一个聊天室">
-                <i class="fa fa-chevron-left"></i> 使用netty基于websocket做一个聊天室
+              <a href="/2017/05/13/codeigniter-4-reader-05-different-3-x/" rel="next" title="Codeigniter 4.0-dev 版源码学习笔记之五——相对于 3.x 的变化">
+                <i class="fa fa-chevron-left"></i> Codeigniter 4.0-dev 版源码学习笔记之五——相对于 3.x 的变化
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/10/20/mysql-json-functions/" rel="prev" title="MySQL 5.7 新增加的JSON特性对应的json方法">
-                MySQL 5.7 新增加的JSON特性对应的json方法 <i class="fa fa-chevron-right"></i>
+              <a href="/2017/05/16/codeigniter-4-reader-07-view/" rel="prev" title="Codeigniter 4.0-dev 版源码学习笔记之七—— View 视图">
+                Codeigniter 4.0-dev 版源码学习笔记之七—— View 视图 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -515,7 +544,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#整体构架"><span class="nav-number">1.</span> <span class="nav-text">整体构架</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基本流程"><span class="nav-number">2.</span> <span class="nav-text">基本流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#补充"><span class="nav-number">3.</span> <span class="nav-text">补充</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#控制器之前"><span class="nav-number">2.</span> <span class="nav-text">控制器之前</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#控制器"><span class="nav-number">3.</span> <span class="nav-text">控制器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#控制器之后"><span class="nav-number">4.</span> <span class="nav-text">控制器之后</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#结语"><span class="nav-number">5.</span> <span class="nav-text">结语</span></a></li></ol></div>
             
           </div>
         </section>
