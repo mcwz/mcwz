@@ -84,21 +84,19 @@
 
 
 
-<meta name="description" content="Codeigniter.php 是 CI 4 的核心所在，在这里接收并处理了 request 请求，安全检查，缓存处理， URL 解析以及路由匹配，执行过滤器，加载运行 Controller ，组装 repsonse 响应并发送等。">
+<meta name="description" content="我个人觉得在当前 MVC 流行的架构下，要想去了解一个框架，或者是一个基于此架构下的应用程序，最好的入手方式就是先看路由，虽然路由不是 MVC 里的任何一个，但是知道了路由的来龙去脉就知道了整个框架或者是应用的结构。从一个请求开始，具体分配到哪个 C 去执行的， C 里又调用了哪些东西，整个脉络也就清晰了。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Codeigniter 4.0-dev 版源码学习笔记之四——详细路由过程">
-<meta property="og:url" content="http://sheldong.space/2017/05/13/codeigniter-4-reader-03-core-codeigniter-php/index.html">
+<meta property="og:title" content="Codeigniter 4.0-dev 版源码学习笔记之三——核心文件 Codeigniter.php">
+<meta property="og:url" content="http://sheldong.space/2017/05/13/codeigniter-4-reader-04-route/index.html">
 <meta property="og:site_name" content="飞翔猴子">
-<meta property="og:description" content="Codeigniter.php 是 CI 4 的核心所在，在这里接收并处理了 request 请求，安全检查，缓存处理， URL 解析以及路由匹配，执行过滤器，加载运行 Controller ，组装 repsonse 响应并发送等。">
-<meta property="og:image" content="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/19BDC3E515EA430789AC62DA2750D153/7255">
-<meta property="og:image" content="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/B5B074E0826C471C8CEAAB33E8A733DE/7270">
-<meta property="og:image" content="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/D603A0C88A0245CABB7CBDC774AC865D/7318">
-<meta property="og:image" content="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/6D435A7E6D674EF4A223F0E27DE048F1/7393">
-<meta property="og:updated_time" content="2017-05-17T08:28:59.917Z">
+<meta property="og:description" content="我个人觉得在当前 MVC 流行的架构下，要想去了解一个框架，或者是一个基于此架构下的应用程序，最好的入手方式就是先看路由，虽然路由不是 MVC 里的任何一个，但是知道了路由的来龙去脉就知道了整个框架或者是应用的结构。从一个请求开始，具体分配到哪个 C 去执行的， C 里又调用了哪些东西，整个脉络也就清晰了。">
+<meta property="og:image" content="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/204B4EC7054F4B5484307EFB553D72F1/7716">
+<meta property="og:image" content="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/AED34CCE2E4C487289AAB6447DA29197/7764">
+<meta property="og:updated_time" content="2017-05-17T08:31:14.606Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Codeigniter 4.0-dev 版源码学习笔记之四——详细路由过程">
-<meta name="twitter:description" content="Codeigniter.php 是 CI 4 的核心所在，在这里接收并处理了 request 请求，安全检查，缓存处理， URL 解析以及路由匹配，执行过滤器，加载运行 Controller ，组装 repsonse 响应并发送等。">
-<meta name="twitter:image" content="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/19BDC3E515EA430789AC62DA2750D153/7255">
+<meta name="twitter:title" content="Codeigniter 4.0-dev 版源码学习笔记之三——核心文件 Codeigniter.php">
+<meta name="twitter:description" content="我个人觉得在当前 MVC 流行的架构下，要想去了解一个框架，或者是一个基于此架构下的应用程序，最好的入手方式就是先看路由，虽然路由不是 MVC 里的任何一个，但是知道了路由的来龙去脉就知道了整个框架或者是应用的结构。从一个请求开始，具体分配到哪个 C 去执行的， C 里又调用了哪些东西，整个脉络也就清晰了。">
+<meta name="twitter:image" content="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/204B4EC7054F4B5484307EFB553D72F1/7716">
 
 
 
@@ -119,10 +117,10 @@
 
 
 
-  <link rel="canonical" href="http://sheldong.space/2017/05/13/codeigniter-4-reader-03-core-codeigniter-php/"/>
+  <link rel="canonical" href="http://sheldong.space/2017/05/13/codeigniter-4-reader-04-route/"/>
 
 
-  <title> Codeigniter 4.0-dev 版源码学习笔记之四——详细路由过程 | 飞翔猴子 </title>
+  <title> Codeigniter 4.0-dev 版源码学习笔记之三——核心文件 Codeigniter.php | 飞翔猴子 </title>
 </head>
 
 <body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
@@ -262,7 +260,7 @@
             
             
               
-                Codeigniter 4.0-dev 版源码学习笔记之四——详细路由过程
+                Codeigniter 4.0-dev 版源码学习笔记之三——核心文件 Codeigniter.php
               
             
           </h1>
@@ -274,7 +272,7 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-05-13T09:13:15+08:00" content="2017-05-13">
+            <time itemprop="dateCreated" datetime="2017-05-13T08:21:50+08:00" content="2017-05-13">
               2017-05-13
             </time>
           </span>
@@ -304,8 +302,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2017/05/13/codeigniter-4-reader-03-core-codeigniter-php/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/05/13/codeigniter-4-reader-03-core-codeigniter-php/" itemprop="commentsCount"></span>
+                <a href="/2017/05/13/codeigniter-4-reader-04-route/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/05/13/codeigniter-4-reader-04-route/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -315,7 +313,7 @@
 
           
           
-             <span id="/2017/05/13/codeigniter-4-reader-03-core-codeigniter-php/" class="leancloud_visitors" data-flag-title="Codeigniter 4.0-dev 版源码学习笔记之四——详细路由过程">
+             <span id="/2017/05/13/codeigniter-4-reader-04-route/" class="leancloud_visitors" data-flag-title="Codeigniter 4.0-dev 版源码学习笔记之三——核心文件 Codeigniter.php">
                &nbsp; | &nbsp;
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -337,52 +335,39 @@
       
 
       
-        <h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>Codeigniter.php 是 CI 4 的核心所在，在这里接收并处理了 request 请求，安全检查，缓存处理， URL 解析以及路由匹配，执行过滤器，加载运行 Controller ，组装 repsonse 响应并发送等。</p>
-<p>首先扔一张流程图，后续我们将开始介绍整个大致流程：</p>
-<p><img src="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/19BDC3E515EA430789AC62DA2750D153/7255" alt="Codeigniter.php 流程图"></p>
-<p>注：因源码较长，不再完完整截图，仅截图关键位置，并直接使用源码文件中的行号作为导引。</p>
-<h4 id="run-方法："><a href="#run-方法：" class="headerlink" title="run() 方法："></a>run() 方法：</h4><p>run 方法是在 Codeigniter 初始化后由 index.php 调用的，可以称作为核心的入口。</p>
-<p><img src="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/B5B074E0826C471C8CEAAB33E8A733DE/7270" alt="run 方法源码截图"></p>
+        <h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>我个人觉得在当前 MVC 流行的架构下，要想去了解一个框架，或者是一个基于此架构下的应用程序，最好的入手方式就是先看路由，虽然路由不是 MVC 里的任何一个，但是知道了路由的来龙去脉就知道了整个框架或者是应用的结构。从一个请求开始，具体分配到哪个 C 去执行的， C 里又调用了哪些东西，整个脉络也就清晰了。</p>
+<p>然而整个路由的实现的逻辑本身又是比较好理解的，无非就是从请求的 URL 中按着约定的规则取出 C 对应的 class 以及 method 即可。如此，我们接下来详细看看 CI 4 dev 版的路由具体实现的逻辑。</p>
+<h4 id="找到路由逻辑的具体位置"><a href="#找到路由逻辑的具体位置" class="headerlink" title="找到路由逻辑的具体位置"></a>找到路由逻辑的具体位置</h4><p>上一节我们说 Codeigniter.php 的时候讲到， index.php 入口文件通过 $app-&gt;run() 调取了 Codeigniter 类中的 run 方法。 run 中又执行了 handleRequest 方法用来处理请求的具体信息。接着 handleRequest 调取 tryToRouteIt 来尝试解析路由，此时代码逻辑还在 Codeigniter.php 里，真正的解析过程还没有开始。在 tryToRouteIt 方法中，通过 service 方式加载了 router 类，通过 system/config/service 加载 router 代码如下，这也是一个服务加载的统一形式，其它的核心辅助类都是如此加载：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">public static function router(\CodeIgniter\Router\RouteCollectionInterface $routes = null, $getShared = true)</div><div class="line">&#123;</div><div class="line">	if ($getShared)</div><div class="line">	&#123;</div><div class="line">		return self::getSharedInstance(&apos;router&apos;, $routes);</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	if (empty($routes))</div><div class="line">	&#123;</div><div class="line">		$routes = self::routes(true);</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	return new \CodeIgniter\Router\Router($routes);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>从 倒数第二行可以看出加载的 router 类位于 system/router 下的 Router 类里。</p>
+<h4 id="system-router-Router-php-解析路由的详细过程"><a href="#system-router-Router-php-解析路由的详细过程" class="headerlink" title="system/router/Router.php 解析路由的详细过程"></a>system/router/Router.php 解析路由的详细过程</h4><p>首先我们把 Codeigniter.php 中调用该类的详细代码列出来如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$this-&gt;controller = $this-&gt;router-&gt;handle($path);</div><div class="line">$this-&gt;method     = $this-&gt;router-&gt;methodName();</div></pre></td></tr></table></figure>
+<p>关键的只有两行，一行找类一行找方法。找类的那一行处理了大部分的逻辑，找方法的那一行就是简单的 get 。</p>
+<p><img src="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/204B4EC7054F4B5484307EFB553D72F1/7716" alt="handle 方法源码截图"></p>
 <ol>
-<li>185 行，开始基准点，用于记录程序执行耗时。</li>
-<li>187 行，获取 request 信息。通过 service 容器机制加载了 CodeIgniter\HTTP\IncomingRequest 读取处理了HTTP method 、 URI 、 Headers 、 Message body 等信息。</li>
-<li>188 行，初始化 response ，用于发送信息给浏览器。</li>
-<li>190 行，是否强制 https 访问。</li>
-<li>194，185 行，处理缓存。</li>
-<li>197 行，检测post中是否有 _method 字段重新定义了 http 请求方法。该特性主要用于 Restful 特性时重定义浏览器不支持的 put 、 delete 等特性。</li>
-<li>200 行，尝试处理此次请求，详细见 <strong>handleRuest() 方法</strong>。</li>
-<li>之后这些行主要处理在发生解析等一些错误时应对方法。</li>
+<li>146-150 行，判断 $uri 如果为空，那么返回默认路由。因为在该类的构造方法里读取了配置中的默认路由，因此此处直接返回配置即可。</li>
+<li>153-156 行，检查路由配置文件里的配置是否有和当前匹配的 URL ，有的话，直接返回配置的控制器即可。</li>
+<li>161-164 行，检查是否开启了自动路由匹配，如果没有开启，那么读取完配置好的路由都没有结果，那么就可以 throw pageNoteFoundException 了。</li>
+<li>166 行，真正的处理 CI 路由逻辑的地方。详细见 autoRoute 方法。</li>
+<li>168 行，把处理完毕后找到的 controller 返回。</li>
 </ol>
-<h4 id="handleRuest-方法"><a href="#handleRuest-方法" class="headerlink" title="handleRuest() 方法"></a>handleRuest() 方法</h4><p><img src="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/D603A0C88A0245CABB7CBDC774AC865D/7318" alt="handleRuest 方法源码截图"></p>
-<p>该方法找到并执行 controller 并把执行后得到的 response 内容发给浏览器。</p>
+<p>此方法通过调用其它方法已经实现了寻找 controller 的过程，主流程到此已经结束。</p>
+<h4 id="autoRoute-方法"><a href="#autoRoute-方法" class="headerlink" title="autoRoute 方法"></a>autoRoute 方法</h4><p>该方法是自动按着约定规则去 controller 目录去找路由的过程。</p>
+<p><img src="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/AED34CCE2E4C487289AAB6447DA29197/7764" alt="autoRoute 方法源码截图"></p>
 <ol>
-<li>233 行，解析路由，具体见 <strong>tryToRouteIt() 方法</strong></li>
-<li>236-241 行，解析并执行过滤器，过滤器可想像成之前版本的钩子，用于在某些特定的动作点之前或者之后执行一些自定义代码。</li>
-<li>243 行，划重点，开始涉及到 controller 了。本行执行了 startController 方法，看起来是已经执行了 controller ，但实际上这个更像是 before Controller ，只有 Controller 是一个闭包的时候才直接执行了，如果不是闭包，那么这个方法仅仅做了一些检测工作，判断当前 Controller 存不存在等。</li>
-<li>248 行， createController 方法执行了如下代码： new $this-&gt;controller($this-&gt;request, $this-&gt;response) ，可见常规的 controller 对象此时才出现。</li>
-<li>251 行，调用了 post_controller_constructor 事件，但是源码中的注释又提到了 hook 。个人觉得有时可以把 hook 、 event 、 filter 放在一起分析，它们很相似不是吗。</li>
-<li>253 行，run 了 controller 此时是真正执行了自定义的 controller 。CI 4 中的 view 机制不再是 load 方式，而是和 laravel 一样的 return 方式，在 controller 里仅仅是生成了 view 的字符串并 return 回 codeigniter 核心对象，由核心对象来继续处理。</li>
-<li>264 行，gatherOutput 通过 ob_* 系函数收集输出内容。</li>
-<li>267 行，执行了 after  的过滤器。</li>
-<li>280 行，发送信息到浏览器。</li>
+<li>442 行：将 URI 按着 / 打散成数组。</li>
+<li>444 行：确定 URI 里是否包含 Controller 的目录部分。该方法将 $segments 数组由 0 元素一次一次循环并匹配 application/controller 下的目录，找到后并且该目录下没有同名的 PHP 文件即认为是路径组成部分，同时将该元素从 $segments 中去除，以保证 $segments 中剩下的仅仅是 class 与 method 内容。</li>
+<li>448-456 行：去除路径后发现 $segments 数组没元素啦，那么只能是默认处理了。否则直接弹出数组中的第一个元素即是 class 信息。</li>
+<li>461-464 行：如果此时 $segments 中不为空，那么弹出数组中第一个元素是 method 信息。</li>
+<li>466-469 行：如果此时 $segments 中还不为空，那么剩下的就是传递的参数信息。</li>
+<li>472-476 行：判断代表 controller 的文件存在的话 include 进来。</li>
 </ol>
-<h4 id="tryToRouteIt-方法"><a href="#tryToRouteIt-方法" class="headerlink" title="tryToRouteIt() 方法"></a>tryToRouteIt() 方法</h4><p>该方法主要在 url 信息中找到 controller 在哪里。</p>
-<p><img src="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/6D435A7E6D674EF4A223F0E27DE048F1/7393" alt="tryToRouteIt 方法源码截图"></p>
-<ol>
-<li>590-592 行，读取配置文件里的自定义路由。路由的配置与之前版本有了小小的变动。具体到路由章节深入分析。</li>
-<li>596 行，拿到 route 对象。具体路由逻辑都在这个对象里。</li>
-<li>598 行，处理 cli 与 web 下不同的路径形式。</li>
-<li>603 行，从此处开始收集输出信息 (view) 。</li>
-<li>605 行，拿到 controller ，此处仅仅是找到 controller 的位置。具体如何拿到，后续会有相应章节。</li>
-<li>606 行，拿到 method ，此处仅仅是找到 method 的位置。具体如何拿到，后续会有相应章节。</li>
-<li>610-613 行，处理国际化问题。</li>
-</ol>
-<p><strong>tryToRouteIt</strong> 执行完毕后将会返回到 <strong>handleRequest</strong> ，在 handleRequest 里执行了刚刚找到的 controller 和 method 并收集 controller 中 return 回的 view 字符串，通过 gatherOutput 方法拿到输出，输出完毕后 handleRequest 返回到 <strong>run</strong> 方法。 run 方法再返回到 <strong>index.php</strong> 。至此， CI 的执行主流程完毕。</p>
-<h4 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h4><p>Codeigniter.php 是 CI 的核心文件，它被 index.php 调用后，完成了诸多的主流程操作。</p>
-<p>下一节将详细看看路由的过程。</p>
+<h4 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h4><p>至此，路由部分处理完了，找到的 controller 与 method 信息分别放到了对象对应的属性里。因此在 codeigniter.php 中用以下两行就拿到了相应的信息：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$this-&gt;controller = $this-&gt;router-&gt;handle($path);</div><div class="line">$this-&gt;method     = $this-&gt;router-&gt;methodName();</div></pre></td></tr></table></figure>
+<p>下一章应该会看看 CI 4 相对 CI 3 的变化。</p>
 <hr>
 <blockquote>
-<p>此文可以转载，但转载前需要发邮件到imustgxd*sina.cn进行沟通，未沟通的均视作侵权。<br><a href="http://sheldong.space/2017/05/08/codeigniter-4-reader-03-core-codeigniter-php">http://sheldong.space/2017/05/08/codeigniter-4-reader-03-core-codeigniter-php</a></p>
+<p>此文可以转载，但转载前需要发邮件到imustgxd*sina.cn进行沟通，未沟通的均视作侵权。<br><a href="http://sheldong.space/2017/05/05/codeigniter-4-reader-04-route">http://sheldong.space/2017/05/05/codeigniter-4-reader-04-route</a></p>
 </blockquote>
 <hr>
 <p><strong>如有错误或者不明白的地方，请在下方评论，我会尽快回复并及时更新教程，感谢！</strong></p>
@@ -417,8 +402,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/05/06/codeigniter-4-reader-04-route/" rel="next" title="Codeigniter 4.0-dev 版源码学习笔记之三——核心文件 Codeigniter.php">
-                <i class="fa fa-chevron-left"></i> Codeigniter 4.0-dev 版源码学习笔记之三——核心文件 Codeigniter.php
+              <a href="/2017/05/08/codeigniter-4-reader-03-core-codeigniter-php/" rel="next" title="Codeigniter 4.0-dev 版源码学习笔记之四——详细路由过程">
+                <i class="fa fa-chevron-left"></i> Codeigniter 4.0-dev 版源码学习笔记之四——详细路由过程
               </a>
             
           </div>
@@ -472,8 +457,8 @@
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2017/05/13/codeigniter-4-reader-03-core-codeigniter-php/"
-           data-title="Codeigniter 4.0-dev 版源码学习笔记之四——详细路由过程" data-url="http://sheldong.space/2017/05/13/codeigniter-4-reader-03-core-codeigniter-php/">
+      <div class="ds-thread" data-thread-key="2017/05/13/codeigniter-4-reader-04-route/"
+           data-title="Codeigniter 4.0-dev 版源码学习笔记之三——核心文件 Codeigniter.php" data-url="http://sheldong.space/2017/05/13/codeigniter-4-reader-04-route/">
       </div>
     
   </div>
@@ -564,7 +549,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#run-方法："><span class="nav-number">2.</span> <span class="nav-text">run() 方法：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#handleRuest-方法"><span class="nav-number">3.</span> <span class="nav-text">handleRuest() 方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#tryToRouteIt-方法"><span class="nav-number">4.</span> <span class="nav-text">tryToRouteIt() 方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#小结"><span class="nav-number">5.</span> <span class="nav-text">小结</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#找到路由逻辑的具体位置"><span class="nav-number">2.</span> <span class="nav-text">找到路由逻辑的具体位置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#system-router-Router-php-解析路由的详细过程"><span class="nav-number">3.</span> <span class="nav-text">system/router/Router.php 解析路由的详细过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#autoRoute-方法"><span class="nav-number">4.</span> <span class="nav-text">autoRoute 方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#小结"><span class="nav-number">5.</span> <span class="nav-text">小结</span></a></li></ol></div>
             
           </div>
         </section>
