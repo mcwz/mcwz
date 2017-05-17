@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="Codeigniter" />
 
 
 
@@ -84,16 +84,21 @@
 
 
 
-<meta name="description" content="事件经过今天要给Discuz程序里做一个模块，这个模块可以直接在帖子里显示PDF文档，部署过程中发现运行环境不能正确显示。表现为在Chrome浏览器下一直显示加载文件中。查看console中也没有什么报错。因为以前遇到过其他文件类似的情况，于是猜测是MiME的问题，于是去查Apache配置，奇怪的是Apache里指定了PDF相关的内容，然后线索就断了。">
+<meta name="description" content="Codeigniter.php 是 CI 4 的核心所在，在这里接收并处理了 request 请求，安全检查，缓存处理， URL 解析以及路由匹配，执行过滤器，加载运行 Controller ，组装 repsonse 响应并发送等。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="关于Apache MIME和MIME_Magic模块">
-<meta property="og:url" content="http://sheldong.space/2016/10/20/apache-mime-mime-magic/index.html">
+<meta property="og:title" content="Codeigniter 4.0-dev 版源码学习笔记之四——详细路由过程">
+<meta property="og:url" content="http://sheldong.space/2017/05/13/codeigniter-4-reader-03-core-codeigniter-php/index.html">
 <meta property="og:site_name" content="飞翔猴子">
-<meta property="og:description" content="事件经过今天要给Discuz程序里做一个模块，这个模块可以直接在帖子里显示PDF文档，部署过程中发现运行环境不能正确显示。表现为在Chrome浏览器下一直显示加载文件中。查看console中也没有什么报错。因为以前遇到过其他文件类似的情况，于是猜测是MiME的问题，于是去查Apache配置，奇怪的是Apache里指定了PDF相关的内容，然后线索就断了。">
-<meta property="og:updated_time" content="2016-10-21T02:04:02.249Z">
+<meta property="og:description" content="Codeigniter.php 是 CI 4 的核心所在，在这里接收并处理了 request 请求，安全检查，缓存处理， URL 解析以及路由匹配，执行过滤器，加载运行 Controller ，组装 repsonse 响应并发送等。">
+<meta property="og:image" content="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/19BDC3E515EA430789AC62DA2750D153/7255">
+<meta property="og:image" content="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/B5B074E0826C471C8CEAAB33E8A733DE/7270">
+<meta property="og:image" content="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/D603A0C88A0245CABB7CBDC774AC865D/7318">
+<meta property="og:image" content="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/6D435A7E6D674EF4A223F0E27DE048F1/7393">
+<meta property="og:updated_time" content="2017-05-17T08:28:59.917Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="关于Apache MIME和MIME_Magic模块">
-<meta name="twitter:description" content="事件经过今天要给Discuz程序里做一个模块，这个模块可以直接在帖子里显示PDF文档，部署过程中发现运行环境不能正确显示。表现为在Chrome浏览器下一直显示加载文件中。查看console中也没有什么报错。因为以前遇到过其他文件类似的情况，于是猜测是MiME的问题，于是去查Apache配置，奇怪的是Apache里指定了PDF相关的内容，然后线索就断了。">
+<meta name="twitter:title" content="Codeigniter 4.0-dev 版源码学习笔记之四——详细路由过程">
+<meta name="twitter:description" content="Codeigniter.php 是 CI 4 的核心所在，在这里接收并处理了 request 请求，安全检查，缓存处理， URL 解析以及路由匹配，执行过滤器，加载运行 Controller ，组装 repsonse 响应并发送等。">
+<meta name="twitter:image" content="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/19BDC3E515EA430789AC62DA2750D153/7255">
 
 
 
@@ -114,10 +119,10 @@
 
 
 
-  <link rel="canonical" href="http://sheldong.space/2016/10/20/apache-mime-mime-magic/"/>
+  <link rel="canonical" href="http://sheldong.space/2017/05/13/codeigniter-4-reader-03-core-codeigniter-php/"/>
 
 
-  <title> 关于Apache MIME和MIME_Magic模块 | 飞翔猴子 </title>
+  <title> Codeigniter 4.0-dev 版源码学习笔记之四——详细路由过程 | 飞翔猴子 </title>
 </head>
 
 <body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
@@ -257,7 +262,7 @@
             
             
               
-                关于Apache MIME和MIME_Magic模块
+                Codeigniter 4.0-dev 版源码学习笔记之四——详细路由过程
               
             
           </h1>
@@ -269,19 +274,38 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-10-20T10:50:29+08:00" content="2016-10-20">
-              2016-10-20
+            <time itemprop="dateCreated" datetime="2017-05-13T09:13:15+08:00" content="2017-05-13">
+              2017-05-13
             </time>
           </span>
 
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Codeigniter-源码/" itemprop="url" rel="index">
+                    <span itemprop="name">Codeigniter 源码</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
           
 
           
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/10/20/apache-mime-mime-magic/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/20/apache-mime-mime-magic/" itemprop="commentsCount"></span>
+                <a href="/2017/05/13/codeigniter-4-reader-03-core-codeigniter-php/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/05/13/codeigniter-4-reader-03-core-codeigniter-php/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -291,7 +315,7 @@
 
           
           
-             <span id="/2016/10/20/apache-mime-mime-magic/" class="leancloud_visitors" data-flag-title="关于Apache MIME和MIME_Magic模块">
+             <span id="/2017/05/13/codeigniter-4-reader-03-core-codeigniter-php/" class="leancloud_visitors" data-flag-title="Codeigniter 4.0-dev 版源码学习笔记之四——详细路由过程">
                &nbsp; | &nbsp;
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -313,25 +337,55 @@
       
 
       
-        <h2 id="事件经过"><a href="#事件经过" class="headerlink" title="事件经过"></a>事件经过</h2><p>今天要给Discuz程序里做一个模块，这个模块可以直接在帖子里显示PDF文档，部署过程中发现运行环境不能正确显示。表现为在Chrome浏览器下一直显示加载文件中。查看console中也没有什么报错。因为以前遇到过其他文件类似的情况，于是猜测是MiME的问题，于是去查Apache配置，奇怪的是Apache里指定了PDF相关的内容，然后线索就断了。</p>
-<a id="more"></a>
-<p>期间查看了Chrome 开发者工具中的network面板中发现Chrome多发了状态为206的请求，觉得可能是这的原因，但是查完后206的涵义后还是毫无头绪。后来认真看了一下Respone Header里的内容发现 content type竟然是text/html 这就奇怪了，明明是pdf啊。于是焦点就又回到了MIME上边。因为在测试环境是没问题的，于是把测试环境和运行环境的httpd.conf里关于mime的内容搜索出来详细对比了一下，发现测试环境中关于MIME_Magic的模块是加载的，运行环境是注释了，莫非问题出在这里？于是将测试环境关于MIME_Magic的配置拷贝过去，reload apache后问题解决。</p>
-<p>解决这事几乎耗了一下午。详细搜索了一下MIME_Magic，下面详细说一下mod_mime和mod_mime_magic。</p>
-<h2 id="Apache模块-mod-mime"><a href="#Apache模块-mod-mime" class="headerlink" title="Apache模块 mod_mime"></a>Apache模块 mod_mime</h2><p>浏览器在接收到回应的时候是需要知道具体是哪种content type才能正确解析的。为此Apache提供了mod_mime模块来处理部分常见的文件类型。</p>
-<p>Apache手册上时这样描述的：</p>
-<blockquote>
-<p>本模块通过文件的扩展名将不同的”元信息”与文件关联起来。元信息在文档的文件名与文档的MIME类型、语言、字符集、编码方式之间建立关联。</p>
-</blockquote>
-<p>以上说明mod_mime模块通过文件后缀名来检测文件的类型，同时把处理结果发给浏览器。问题就出在这里了，Discuz上传后的PDF不再是以PDF为后缀，而是以.attach为后缀，导致Apache识别不出文件类型只能以默认的text/html输出。解决此问题mod_mime_magic就上场了。</p>
-<h2 id="Apache模块-mod-mime-magic"><a href="#Apache模块-mod-mime-magic" class="headerlink" title="Apache模块 mod_mime_magic"></a>Apache模块 mod_mime_magic</h2><p>手册上说：</p>
-<blockquote>
-<p>本模块采取Unix系统下file(1)命令相同的方法：检查文件开始的几个字节，来判定文件的MIME类型。</p>
-</blockquote>
-<p>因此对于后缀名不是PDF的attach，Apache通过读取文件仍然能够识别此文件的正常类型。</p>
-<h2 id="还需要验证的"><a href="#还需要验证的" class="headerlink" title="还需要验证的"></a>还需要验证的</h2><ol>
-<li>mod_mime和mod_mime_magic的验证顺序，比如说我把.txt的文件后缀名改为PDF后不知道能不能正确识别。</li>
-<li>mod_mime_magic在执行完毕后得到是PDF的结论后还需不需要在调取mod_mime模块来获取具体的输出类型，因为具体的输出类型在mime.types记录的。</li>
+        <h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>Codeigniter.php 是 CI 4 的核心所在，在这里接收并处理了 request 请求，安全检查，缓存处理， URL 解析以及路由匹配，执行过滤器，加载运行 Controller ，组装 repsonse 响应并发送等。</p>
+<p>首先扔一张流程图，后续我们将开始介绍整个大致流程：</p>
+<p><img src="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/19BDC3E515EA430789AC62DA2750D153/7255" alt="Codeigniter.php 流程图"></p>
+<p>注：因源码较长，不再完完整截图，仅截图关键位置，并直接使用源码文件中的行号作为导引。</p>
+<h4 id="run-方法："><a href="#run-方法：" class="headerlink" title="run() 方法："></a>run() 方法：</h4><p>run 方法是在 Codeigniter 初始化后由 index.php 调用的，可以称作为核心的入口。</p>
+<p><img src="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/B5B074E0826C471C8CEAAB33E8A733DE/7270" alt="run 方法源码截图"></p>
+<ol>
+<li>185 行，开始基准点，用于记录程序执行耗时。</li>
+<li>187 行，获取 request 信息。通过 service 容器机制加载了 CodeIgniter\HTTP\IncomingRequest 读取处理了HTTP method 、 URI 、 Headers 、 Message body 等信息。</li>
+<li>188 行，初始化 response ，用于发送信息给浏览器。</li>
+<li>190 行，是否强制 https 访问。</li>
+<li>194，185 行，处理缓存。</li>
+<li>197 行，检测post中是否有 _method 字段重新定义了 http 请求方法。该特性主要用于 Restful 特性时重定义浏览器不支持的 put 、 delete 等特性。</li>
+<li>200 行，尝试处理此次请求，详细见 <strong>handleRuest() 方法</strong>。</li>
+<li>之后这些行主要处理在发生解析等一些错误时应对方法。</li>
 </ol>
+<h4 id="handleRuest-方法"><a href="#handleRuest-方法" class="headerlink" title="handleRuest() 方法"></a>handleRuest() 方法</h4><p><img src="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/D603A0C88A0245CABB7CBDC774AC865D/7318" alt="handleRuest 方法源码截图"></p>
+<p>该方法找到并执行 controller 并把执行后得到的 response 内容发给浏览器。</p>
+<ol>
+<li>233 行，解析路由，具体见 <strong>tryToRouteIt() 方法</strong></li>
+<li>236-241 行，解析并执行过滤器，过滤器可想像成之前版本的钩子，用于在某些特定的动作点之前或者之后执行一些自定义代码。</li>
+<li>243 行，划重点，开始涉及到 controller 了。本行执行了 startController 方法，看起来是已经执行了 controller ，但实际上这个更像是 before Controller ，只有 Controller 是一个闭包的时候才直接执行了，如果不是闭包，那么这个方法仅仅做了一些检测工作，判断当前 Controller 存不存在等。</li>
+<li>248 行， createController 方法执行了如下代码： new $this-&gt;controller($this-&gt;request, $this-&gt;response) ，可见常规的 controller 对象此时才出现。</li>
+<li>251 行，调用了 post_controller_constructor 事件，但是源码中的注释又提到了 hook 。个人觉得有时可以把 hook 、 event 、 filter 放在一起分析，它们很相似不是吗。</li>
+<li>253 行，run 了 controller 此时是真正执行了自定义的 controller 。CI 4 中的 view 机制不再是 load 方式，而是和 laravel 一样的 return 方式，在 controller 里仅仅是生成了 view 的字符串并 return 回 codeigniter 核心对象，由核心对象来继续处理。</li>
+<li>264 行，gatherOutput 通过 ob_* 系函数收集输出内容。</li>
+<li>267 行，执行了 after  的过滤器。</li>
+<li>280 行，发送信息到浏览器。</li>
+</ol>
+<h4 id="tryToRouteIt-方法"><a href="#tryToRouteIt-方法" class="headerlink" title="tryToRouteIt() 方法"></a>tryToRouteIt() 方法</h4><p>该方法主要在 url 信息中找到 controller 在哪里。</p>
+<p><img src="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/6D435A7E6D674EF4A223F0E27DE048F1/7393" alt="tryToRouteIt 方法源码截图"></p>
+<ol>
+<li>590-592 行，读取配置文件里的自定义路由。路由的配置与之前版本有了小小的变动。具体到路由章节深入分析。</li>
+<li>596 行，拿到 route 对象。具体路由逻辑都在这个对象里。</li>
+<li>598 行，处理 cli 与 web 下不同的路径形式。</li>
+<li>603 行，从此处开始收集输出信息 (view) 。</li>
+<li>605 行，拿到 controller ，此处仅仅是找到 controller 的位置。具体如何拿到，后续会有相应章节。</li>
+<li>606 行，拿到 method ，此处仅仅是找到 method 的位置。具体如何拿到，后续会有相应章节。</li>
+<li>610-613 行，处理国际化问题。</li>
+</ol>
+<p><strong>tryToRouteIt</strong> 执行完毕后将会返回到 <strong>handleRequest</strong> ，在 handleRequest 里执行了刚刚找到的 controller 和 method 并收集 controller 中 return 回的 view 字符串，通过 gatherOutput 方法拿到输出，输出完毕后 handleRequest 返回到 <strong>run</strong> 方法。 run 方法再返回到 <strong>index.php</strong> 。至此， CI 的执行主流程完毕。</p>
+<h4 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h4><p>Codeigniter.php 是 CI 的核心文件，它被 index.php 调用后，完成了诸多的主流程操作。</p>
+<p>下一节将详细看看路由的过程。</p>
+<hr>
+<blockquote>
+<p>此文可以转载，但转载前需要发邮件到imustgxd*sina.cn进行沟通，未沟通的均视作侵权。<br><a href="http://sheldong.space/2017/05/08/codeigniter-4-reader-03-core-codeigniter-php">http://sheldong.space/2017/05/08/codeigniter-4-reader-03-core-codeigniter-php</a></p>
+</blockquote>
+<hr>
+<p><strong>如有错误或者不明白的地方，请在下方评论，我会尽快回复并及时更新教程，感谢！</strong></p>
 
       
     </div>
@@ -352,22 +406,24 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/Codeigniter/" rel="tag">#Codeigniter</a>
+          
+        </div>
+      
 
       
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/10/20/singleton-pattern-mmseg4j-high-concurrency-memory-overflow/" rel="next" title="使用单例模式解决mmseg4j在高并发时导致内存溢出问题">
-                <i class="fa fa-chevron-left"></i> 使用单例模式解决mmseg4j在高并发时导致内存溢出问题
+              <a href="/2017/05/06/codeigniter-4-reader-04-route/" rel="next" title="Codeigniter 4.0-dev 版源码学习笔记之三——核心文件 Codeigniter.php">
+                <i class="fa fa-chevron-left"></i> Codeigniter 4.0-dev 版源码学习笔记之三——核心文件 Codeigniter.php
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/10/20/jQuery-javascript-event-bind/" rel="prev" title="关于jQuery与JavaScript的事件绑定">
-                关于jQuery与JavaScript的事件绑定 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -416,8 +472,8 @@
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/10/20/apache-mime-mime-magic/"
-           data-title="关于Apache MIME和MIME_Magic模块" data-url="http://sheldong.space/2016/10/20/apache-mime-mime-magic/">
+      <div class="ds-thread" data-thread-key="2017/05/13/codeigniter-4-reader-03-core-codeigniter-php/"
+           data-title="Codeigniter 4.0-dev 版源码学习笔记之四——详细路由过程" data-url="http://sheldong.space/2017/05/13/codeigniter-4-reader-03-core-codeigniter-php/">
       </div>
     
   </div>
@@ -508,7 +564,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#事件经过"><span class="nav-number">1.</span> <span class="nav-text">事件经过</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Apache模块-mod-mime"><span class="nav-number">2.</span> <span class="nav-text">Apache模块 mod_mime</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Apache模块-mod-mime-magic"><span class="nav-number">3.</span> <span class="nav-text">Apache模块 mod_mime_magic</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#还需要验证的"><span class="nav-number">4.</span> <span class="nav-text">还需要验证的</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#run-方法："><span class="nav-number">2.</span> <span class="nav-text">run() 方法：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#handleRuest-方法"><span class="nav-number">3.</span> <span class="nav-text">handleRuest() 方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#tryToRouteIt-方法"><span class="nav-number">4.</span> <span class="nav-text">tryToRouteIt() 方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#小结"><span class="nav-number">5.</span> <span class="nav-text">小结</span></a></li></ol></div>
             
           </div>
         </section>

@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="Codeigniter" />
 
 
 
@@ -84,16 +84,22 @@
 
 
 
-<meta name="description" content="事件经过今天要给Discuz程序里做一个模块，这个模块可以直接在帖子里显示PDF文档，部署过程中发现运行环境不能正确显示。表现为在Chrome浏览器下一直显示加载文件中。查看console中也没有什么报错。因为以前遇到过其他文件类似的情况，于是猜测是MiME的问题，于是去查Apache配置，奇怪的是Apache里指定了PDF相关的内容，然后线索就断了。">
+<meta name="description" content="本节分析了一下 CI 的 BIOS 系统： bootstrap.php ，这个文件初始化了一些基本的类，找到并初始化了 CI 核心对象，同时将该对象返回给的入口文件。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="关于Apache MIME和MIME_Magic模块">
-<meta property="og:url" content="http://sheldong.space/2016/10/20/apache-mime-mime-magic/index.html">
+<meta property="og:title" content="Codeigniter 4.0-dev 版源码学习笔记之二——入口以及初始化操作">
+<meta property="og:url" content="http://sheldong.space/2017/05/06/codeigniter-4-reader-02-index-php-and-bootstrap/index.html">
 <meta property="og:site_name" content="飞翔猴子">
-<meta property="og:description" content="事件经过今天要给Discuz程序里做一个模块，这个模块可以直接在帖子里显示PDF文档，部署过程中发现运行环境不能正确显示。表现为在Chrome浏览器下一直显示加载文件中。查看console中也没有什么报错。因为以前遇到过其他文件类似的情况，于是猜测是MiME的问题，于是去查Apache配置，奇怪的是Apache里指定了PDF相关的内容，然后线索就断了。">
-<meta property="og:updated_time" content="2016-10-21T02:04:02.249Z">
+<meta property="og:description" content="本节分析了一下 CI 的 BIOS 系统： bootstrap.php ，这个文件初始化了一些基本的类，找到并初始化了 CI 核心对象，同时将该对象返回给的入口文件。">
+<meta property="og:image" content="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/3E01D4A0C58F4FED88E75C6501824AC5/6964">
+<meta property="og:image" content="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/973B0608B4F04C06A04711BA9393E11A/6991">
+<meta property="og:image" content="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/1DBD2B73512C49BA9D63B69846EBE394/6960">
+<meta property="og:image" content="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/8B839447FA6F4945B303AB4412F21403/7034">
+<meta property="og:image" content="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/D99523BA532B4D418550FEC18FEEB7CD/7125">
+<meta property="og:updated_time" content="2017-05-17T08:24:30.906Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="关于Apache MIME和MIME_Magic模块">
-<meta name="twitter:description" content="事件经过今天要给Discuz程序里做一个模块，这个模块可以直接在帖子里显示PDF文档，部署过程中发现运行环境不能正确显示。表现为在Chrome浏览器下一直显示加载文件中。查看console中也没有什么报错。因为以前遇到过其他文件类似的情况，于是猜测是MiME的问题，于是去查Apache配置，奇怪的是Apache里指定了PDF相关的内容，然后线索就断了。">
+<meta name="twitter:title" content="Codeigniter 4.0-dev 版源码学习笔记之二——入口以及初始化操作">
+<meta name="twitter:description" content="本节分析了一下 CI 的 BIOS 系统： bootstrap.php ，这个文件初始化了一些基本的类，找到并初始化了 CI 核心对象，同时将该对象返回给的入口文件。">
+<meta name="twitter:image" content="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/3E01D4A0C58F4FED88E75C6501824AC5/6964">
 
 
 
@@ -114,10 +120,10 @@
 
 
 
-  <link rel="canonical" href="http://sheldong.space/2016/10/20/apache-mime-mime-magic/"/>
+  <link rel="canonical" href="http://sheldong.space/2017/05/06/codeigniter-4-reader-02-index-php-and-bootstrap/"/>
 
 
-  <title> 关于Apache MIME和MIME_Magic模块 | 飞翔猴子 </title>
+  <title> Codeigniter 4.0-dev 版源码学习笔记之二——入口以及初始化操作 | 飞翔猴子 </title>
 </head>
 
 <body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
@@ -257,7 +263,7 @@
             
             
               
-                关于Apache MIME和MIME_Magic模块
+                Codeigniter 4.0-dev 版源码学习笔记之二——入口以及初始化操作
               
             
           </h1>
@@ -269,19 +275,38 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-10-20T10:50:29+08:00" content="2016-10-20">
-              2016-10-20
+            <time itemprop="dateCreated" datetime="2017-05-06T08:01:55+08:00" content="2017-05-06">
+              2017-05-06
             </time>
           </span>
 
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Codeigniter-源码/" itemprop="url" rel="index">
+                    <span itemprop="name">Codeigniter 源码</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
           
 
           
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/10/20/apache-mime-mime-magic/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/20/apache-mime-mime-magic/" itemprop="commentsCount"></span>
+                <a href="/2017/05/06/codeigniter-4-reader-02-index-php-and-bootstrap/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/05/06/codeigniter-4-reader-02-index-php-and-bootstrap/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -291,7 +316,7 @@
 
           
           
-             <span id="/2016/10/20/apache-mime-mime-magic/" class="leancloud_visitors" data-flag-title="关于Apache MIME和MIME_Magic模块">
+             <span id="/2017/05/06/codeigniter-4-reader-02-index-php-and-bootstrap/" class="leancloud_visitors" data-flag-title="Codeigniter 4.0-dev 版源码学习笔记之二——入口以及初始化操作">
                &nbsp; | &nbsp;
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -313,25 +338,45 @@
       
 
       
-        <h2 id="事件经过"><a href="#事件经过" class="headerlink" title="事件经过"></a>事件经过</h2><p>今天要给Discuz程序里做一个模块，这个模块可以直接在帖子里显示PDF文档，部署过程中发现运行环境不能正确显示。表现为在Chrome浏览器下一直显示加载文件中。查看console中也没有什么报错。因为以前遇到过其他文件类似的情况，于是猜测是MiME的问题，于是去查Apache配置，奇怪的是Apache里指定了PDF相关的内容，然后线索就断了。</p>
-<a id="more"></a>
-<p>期间查看了Chrome 开发者工具中的network面板中发现Chrome多发了状态为206的请求，觉得可能是这的原因，但是查完后206的涵义后还是毫无头绪。后来认真看了一下Respone Header里的内容发现 content type竟然是text/html 这就奇怪了，明明是pdf啊。于是焦点就又回到了MIME上边。因为在测试环境是没问题的，于是把测试环境和运行环境的httpd.conf里关于mime的内容搜索出来详细对比了一下，发现测试环境中关于MIME_Magic的模块是加载的，运行环境是注释了，莫非问题出在这里？于是将测试环境关于MIME_Magic的配置拷贝过去，reload apache后问题解决。</p>
-<p>解决这事几乎耗了一下午。详细搜索了一下MIME_Magic，下面详细说一下mod_mime和mod_mime_magic。</p>
-<h2 id="Apache模块-mod-mime"><a href="#Apache模块-mod-mime" class="headerlink" title="Apache模块 mod_mime"></a>Apache模块 mod_mime</h2><p>浏览器在接收到回应的时候是需要知道具体是哪种content type才能正确解析的。为此Apache提供了mod_mime模块来处理部分常见的文件类型。</p>
-<p>Apache手册上时这样描述的：</p>
-<blockquote>
-<p>本模块通过文件的扩展名将不同的”元信息”与文件关联起来。元信息在文档的文件名与文档的MIME类型、语言、字符集、编码方式之间建立关联。</p>
-</blockquote>
-<p>以上说明mod_mime模块通过文件后缀名来检测文件的类型，同时把处理结果发给浏览器。问题就出在这里了，Discuz上传后的PDF不再是以PDF为后缀，而是以.attach为后缀，导致Apache识别不出文件类型只能以默认的text/html输出。解决此问题mod_mime_magic就上场了。</p>
-<h2 id="Apache模块-mod-mime-magic"><a href="#Apache模块-mod-mime-magic" class="headerlink" title="Apache模块 mod_mime_magic"></a>Apache模块 mod_mime_magic</h2><p>手册上说：</p>
-<blockquote>
-<p>本模块采取Unix系统下file(1)命令相同的方法：检查文件开始的几个字节，来判定文件的MIME类型。</p>
-</blockquote>
-<p>因此对于后缀名不是PDF的attach，Apache通过读取文件仍然能够识别此文件的正常类型。</p>
-<h2 id="还需要验证的"><a href="#还需要验证的" class="headerlink" title="还需要验证的"></a>还需要验证的</h2><ol>
-<li>mod_mime和mod_mime_magic的验证顺序，比如说我把.txt的文件后缀名改为PDF后不知道能不能正确识别。</li>
-<li>mod_mime_magic在执行完毕后得到是PDF的结论后还需不需要在调取mod_mime模块来获取具体的输出类型，因为具体的输出类型在mime.types记录的。</li>
+        <h4 id="index-php"><a href="#index-php" class="headerlink" title="index.php"></a>index.php</h4><p>index.php 是整个框架的入口文件，也就是说所有的请求都要从它这里开始。因为 index.php 源码非常简洁，那么我们直接放一张源码截图，按着截图说一下源码。</p>
+<p><img src="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/3E01D4A0C58F4FED88E75C6501824AC5/6964" alt="index.php源码截图"></p>
+<p>文件位置：/index.php</p>
+<p>代码很简单，一共7行，前几行还只是定义一些变量，属于前言，就像是我的笔记之一，看不看没什么用啊。第六行进入了正题，它new了一个新的对象  $path ，根据前边 require 的路径，可以找到 paths.php 的源码：</p>
+<p><img src="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/973B0608B4F04C06A04711BA9393E11A/6991" alt="paths.php 源码截图"></p>
+<p>文件位置：/application/config/paths.php</p>
+<p>可以看出来这个类定义了系统目录的位置，因此如果有想定制目录结构的同学，这里肯定也要相应修改下。</p>
+<p>因为我们主要是搞源码，肯定不会改动目录，因此这个文件对我们用处不大。</p>
+<p>回到 index.php ，那么只剩下两行代码了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$app = require rtrim($paths-&gt;systemDirectory,&apos;/ &apos;).&apos;/bootstrap.php&apos;;</div><div class="line">$app-&gt;run();</div></pre></td></tr></table></figure>
+<p>这两行代码就像开机键一样，就那么潇洒的执行下，你的整个程序就跑起来了。</p>
+<p>第一行代码 require 了一个 bootstrap.php 文件，在这个文件里，完成了整个 CI 框架的初始化，包括自动加载等等。</p>
+<p>$app-&gt;run() 这一行，完成了整个应用程序的运行。因为之后还要对这两行代码深入讲，这里仅仅带过。</p>
+<p>以下是程序的执行过程：</p>
+<p><img src="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/1DBD2B73512C49BA9D63B69846EBE394/6960" alt="index.php流程图"></p>
+<h4 id="bootstrap-php-文件："><a href="#bootstrap-php-文件：" class="headerlink" title="bootstrap.php 文件："></a>bootstrap.php 文件：</h4><p>bootstrap.php 是整个 CI 的 “BIOS 系统”，它仅仅负责初始化一些自动加载和找到 Codeigniter 核心一并初始化后返回给入口文件。</p>
+<p>下面是 bootstrap.php 的源码截图：</p>
+<p><img src="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/8B839447FA6F4945B303AB4412F21403/7034" alt="bootstrap.php 文件源码截图"></p>
+<ol>
+<li>第 9 行之前全部是定义一些路径常量</li>
+<li>第 9 行 require 进来了一些常量，如果你有自己的一些常量也可以考虑加到这个文件里，那么几乎在整个 CI 执行期间应该都可以使用。</li>
+<li>第 10 行 Common.php 这个文件定义了一些常用的函数，如 cache 、 view 、 session 等。通过这个函数可以很方便的在程序运行期间执行很多常见操作。</li>
+<li>第 11 行是 CI 自己实现的自动加载类，大部分情况用于自动加载自己的类库，当然为了能兼容大火的 Composer 在 18-20 行， 也对 Composer 进行了处理。</li>
+<li>第 12 行是 CI 自己的自动加载的配置，如果你自己写的类文件，想让 CI 帮你自动加载，可以把类相关信息配置到这里。</li>
+<li>第 13 行的 services.php 是个重头戏，它是容器的一种实现，可以把你写的一些类库初始化信息配置在其中，那么需要的时候，可以像 15 行一样直接使用这个类，并在运行期间保证了这个类的单实例化。</li>
+<li>第 15 行如上所说，真正实例化了 CI 自己的 autoload 类，并在 16 行把 application 目录下的  autoload 配置传入，并在 17 行进行了注册。</li>
+<li>第 22 行，据 CI 注释说：始终加载 url 这个 helper , 原因是 90% 的应用代码都会用到它。话说这个 helper 函数是前边 Common.php 加载进来的。</li>
+<li>第 23 行是核心，它 new 了 Codeigniter 这个核心类，并把 application/config/app.php 的配置传入了，在 24 行初始化了一下 ，随之返回给了 index.php</li>
 </ol>
+<p>下面以一张拙劣的流程图结束本篇文章：</p>
+<p><img src="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/D99523BA532B4D418550FEC18FEEB7CD/7125" alt="bootstrap.php 流程图"></p>
+<h4 id="总结以及下节预告"><a href="#总结以及下节预告" class="headerlink" title="总结以及下节预告"></a>总结以及下节预告</h4><p>本节分析了一下 CI 的 BIOS 系统： bootstrap.php ，这个文件初始化了一些基本的类，找到并初始化了 CI 核心对象，同时将该对象返回给的入口文件。</p>
+<p>下节当然要通览一下 Codeigniter.php 文件。</p>
+<hr>
+<blockquote>
+<p>此文可以转载，但转载前需要发邮件到imustgxd*sina.cn进行沟通，未沟通的均视作侵权。<br><a href="http://sheldong.space/2017/05/06/codeigniter-4-reader-02-index-php-and-bootstrap">http://sheldong.space/2017/05/06/codeigniter-4-reader-02-index-php-and-bootstrap</a></p>
+</blockquote>
+<hr>
+<p><strong>如有错误或者不明白的地方，请在下方评论，我会尽快回复并及时更新教程，感谢！</strong></p>
 
       
     </div>
@@ -352,21 +397,27 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/Codeigniter/" rel="tag">#Codeigniter</a>
+          
+        </div>
+      
 
       
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/10/20/singleton-pattern-mmseg4j-high-concurrency-memory-overflow/" rel="next" title="使用单例模式解决mmseg4j在高并发时导致内存溢出问题">
-                <i class="fa fa-chevron-left"></i> 使用单例模式解决mmseg4j在高并发时导致内存溢出问题
+              <a href="/2017/05/05/codeigniter-4-reader-01-introduction-preview/" rel="next" title="Codeigniter 4.0-dev 版源码学习笔记之一——前言以及 CI 4 预览">
+                <i class="fa fa-chevron-left"></i> Codeigniter 4.0-dev 版源码学习笔记之一——前言以及 CI 4 预览
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/10/20/jQuery-javascript-event-bind/" rel="prev" title="关于jQuery与JavaScript的事件绑定">
-                关于jQuery与JavaScript的事件绑定 <i class="fa fa-chevron-right"></i>
+              <a href="/2017/05/06/codeigniter-4-reader-04-route/" rel="prev" title="Codeigniter 4.0-dev 版源码学习笔记之三——核心文件 Codeigniter.php">
+                Codeigniter 4.0-dev 版源码学习笔记之三——核心文件 Codeigniter.php <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -416,8 +467,8 @@
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/10/20/apache-mime-mime-magic/"
-           data-title="关于Apache MIME和MIME_Magic模块" data-url="http://sheldong.space/2016/10/20/apache-mime-mime-magic/">
+      <div class="ds-thread" data-thread-key="2017/05/06/codeigniter-4-reader-02-index-php-and-bootstrap/"
+           data-title="Codeigniter 4.0-dev 版源码学习笔记之二——入口以及初始化操作" data-url="http://sheldong.space/2017/05/06/codeigniter-4-reader-02-index-php-and-bootstrap/">
       </div>
     
   </div>
@@ -508,7 +559,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#事件经过"><span class="nav-number">1.</span> <span class="nav-text">事件经过</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Apache模块-mod-mime"><span class="nav-number">2.</span> <span class="nav-text">Apache模块 mod_mime</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Apache模块-mod-mime-magic"><span class="nav-number">3.</span> <span class="nav-text">Apache模块 mod_mime_magic</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#还需要验证的"><span class="nav-number">4.</span> <span class="nav-text">还需要验证的</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#index-php"><span class="nav-number">1.</span> <span class="nav-text">index.php</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#bootstrap-php-文件："><span class="nav-number">2.</span> <span class="nav-text">bootstrap.php 文件：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#总结以及下节预告"><span class="nav-number">3.</span> <span class="nav-text">总结以及下节预告</span></a></li></ol></div>
             
           </div>
         </section>
