@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="Codeigniter" />
 
 
 
@@ -84,16 +84,19 @@
 
 
 
-<meta name="description" content="之前的项目公司之前的站内搜索是通过爬虫爬取后，然后通过 Lucene 分词完成的搜索。此种方式有个缺点就是，明明数据可以直接读到，反而用爬虫去爬取，自己人给自己人增加压力，同时因为页面千差万别，导致数据采取并不是很快，同时有些文章也采不到。另外这个搜索是当时买别的系统赠的，爬虫时不时还会罢工很长时间。基于此，部门决定自己写搜索。">
+<meta name="description" content="为什么选择开发过程中的 CI 4 作为源码解读版本：（1）首先我选 CI 是因为它之前的稳定版都是相对比较轻量小巧的，而且可以认为是简单的。（2）为什么没有选择目前稳定的 3.x 版是因为我个人认为这个版本因为历史包袱原因确实在理念方面有些老了，用它没问题，但是学习它就不值得了。（3）选一个开发还没有稳定版的原因：既然仅仅是学习，即使的不稳定版应该也不会耽误我们去了解它，还有就是据说 CI 4 为">
 <meta property="og:type" content="article">
-<meta property="og:title" content="使用单例模式解决mmseg4j在高并发时导致内存溢出问题">
-<meta property="og:url" content="http://sheldong.space/2016/10/20/singleton-pattern-mmseg4j-high-concurrency-memory-overflow/index.html">
+<meta property="og:title" content="Codeigniter 4.0-dev 版源码学习笔记之一——前言以及 CI 4 预览">
+<meta property="og:url" content="http://sheldong.space/2017/05/05/codeigniter-4-reader-01-introduction-preview/index.html">
 <meta property="og:site_name" content="飞翔猴子">
-<meta property="og:description" content="之前的项目公司之前的站内搜索是通过爬虫爬取后，然后通过 Lucene 分词完成的搜索。此种方式有个缺点就是，明明数据可以直接读到，反而用爬虫去爬取，自己人给自己人增加压力，同时因为页面千差万别，导致数据采取并不是很快，同时有些文章也采不到。另外这个搜索是当时买别的系统赠的，爬虫时不时还会罢工很长时间。基于此，部门决定自己写搜索。">
-<meta property="og:updated_time" content="2016-10-21T02:04:09.322Z">
+<meta property="og:description" content="为什么选择开发过程中的 CI 4 作为源码解读版本：（1）首先我选 CI 是因为它之前的稳定版都是相对比较轻量小巧的，而且可以认为是简单的。（2）为什么没有选择目前稳定的 3.x 版是因为我个人认为这个版本因为历史包袱原因确实在理念方面有些老了，用它没问题，但是学习它就不值得了。（3）选一个开发还没有稳定版的原因：既然仅仅是学习，即使的不稳定版应该也不会耽误我们去了解它，还有就是据说 CI 4 为">
+<meta property="og:image" content="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/F7E5F9C7D61542F981438E716C019998/6823">
+<meta property="og:image" content="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/1451F2CCC573468386A903CD1FA81D28/6932">
+<meta property="og:updated_time" content="2017-05-17T08:11:10.466Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="使用单例模式解决mmseg4j在高并发时导致内存溢出问题">
-<meta name="twitter:description" content="之前的项目公司之前的站内搜索是通过爬虫爬取后，然后通过 Lucene 分词完成的搜索。此种方式有个缺点就是，明明数据可以直接读到，反而用爬虫去爬取，自己人给自己人增加压力，同时因为页面千差万别，导致数据采取并不是很快，同时有些文章也采不到。另外这个搜索是当时买别的系统赠的，爬虫时不时还会罢工很长时间。基于此，部门决定自己写搜索。">
+<meta name="twitter:title" content="Codeigniter 4.0-dev 版源码学习笔记之一——前言以及 CI 4 预览">
+<meta name="twitter:description" content="为什么选择开发过程中的 CI 4 作为源码解读版本：（1）首先我选 CI 是因为它之前的稳定版都是相对比较轻量小巧的，而且可以认为是简单的。（2）为什么没有选择目前稳定的 3.x 版是因为我个人认为这个版本因为历史包袱原因确实在理念方面有些老了，用它没问题，但是学习它就不值得了。（3）选一个开发还没有稳定版的原因：既然仅仅是学习，即使的不稳定版应该也不会耽误我们去了解它，还有就是据说 CI 4 为">
+<meta name="twitter:image" content="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/F7E5F9C7D61542F981438E716C019998/6823">
 
 
 
@@ -114,10 +117,10 @@
 
 
 
-  <link rel="canonical" href="http://sheldong.space/2016/10/20/singleton-pattern-mmseg4j-high-concurrency-memory-overflow/"/>
+  <link rel="canonical" href="http://sheldong.space/2017/05/05/codeigniter-4-reader-01-introduction-preview/"/>
 
 
-  <title> 使用单例模式解决mmseg4j在高并发时导致内存溢出问题 | 飞翔猴子 </title>
+  <title> Codeigniter 4.0-dev 版源码学习笔记之一——前言以及 CI 4 预览 | 飞翔猴子 </title>
 </head>
 
 <body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
@@ -257,7 +260,7 @@
             
             
               
-                使用单例模式解决mmseg4j在高并发时导致内存溢出问题
+                Codeigniter 4.0-dev 版源码学习笔记之一——前言以及 CI 4 预览
               
             
           </h1>
@@ -269,19 +272,38 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-10-20T10:01:49+08:00" content="2016-10-20">
-              2016-10-20
+            <time itemprop="dateCreated" datetime="2017-05-05T08:01:55+08:00" content="2017-05-05">
+              2017-05-05
             </time>
           </span>
 
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Codeigniter-源码/" itemprop="url" rel="index">
+                    <span itemprop="name">Codeigniter 源码</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
           
 
           
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/10/20/singleton-pattern-mmseg4j-high-concurrency-memory-overflow/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/20/singleton-pattern-mmseg4j-high-concurrency-memory-overflow/" itemprop="commentsCount"></span>
+                <a href="/2017/05/05/codeigniter-4-reader-01-introduction-preview/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/05/05/codeigniter-4-reader-01-introduction-preview/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -291,7 +313,7 @@
 
           
           
-             <span id="/2016/10/20/singleton-pattern-mmseg4j-high-concurrency-memory-overflow/" class="leancloud_visitors" data-flag-title="使用单例模式解决mmseg4j在高并发时导致内存溢出问题">
+             <span id="/2017/05/05/codeigniter-4-reader-01-introduction-preview/" class="leancloud_visitors" data-flag-title="Codeigniter 4.0-dev 版源码学习笔记之一——前言以及 CI 4 预览">
                &nbsp; | &nbsp;
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -313,16 +335,40 @@
       
 
       
-        <h2 id="之前的项目"><a href="#之前的项目" class="headerlink" title="之前的项目"></a>之前的项目</h2><p>公司之前的站内搜索是通过爬虫爬取后，然后通过 Lucene 分词完成的搜索。此种方式有个缺点就是，明明数据可以直接读到，反而用爬虫去爬取，自己人给自己人增加压力，同时因为页面千差万别，导致数据采取并不是很快，同时有些文章也采不到。另外这个搜索是当时买别的系统赠的，爬虫时不时还会罢工很长时间。基于此，部门决定自己写搜索。</p>
-<a id="more"></a>
-<h2 id="新搜索的构架"><a href="#新搜索的构架" class="headerlink" title="新搜索的构架"></a>新搜索的构架</h2><p>打算采用 Lucene + mmseg4j 来完成核心的索引以及分词。考虑到相关文章并发量比较大，增加ehcache作为缓存，key采用搜索关键词，这样的话，只要搜索词不变的话，就无需重新搜索，可以直接读取内存结果了。</p>
-<h2 id="部署以及遇到的问题"><a href="#部署以及遇到的问题" class="headerlink" title="部署以及遇到的问题"></a>部署以及遇到的问题</h2><p>第一版处理了约15G的数据，搜索单个词的速度还算可以，同时测试了一个并发量比较小的频道的相关文章，发现还算胜任，然后就又找了一个并发量相对较大的频道部署，成功后发现mmseg4j每次搜索的时候都在 try to load … 详细看了一下是在读字典文件，而这个在并发量小的时候还好，当并发量大起来之后，满屏都在 try to load ，过一会 tomcat 就开始报错了，提示java heap space ,同时还伴有IO错误，猜测应该是并发上来之后，IO性能可能不够了。考虑了一下，词典这东西应该是不需要每次都加载啊，只要我的词典内容不变，没必要非重新加载一遍这个，于是就找mmseg4j的配置，发现只有new Analyzer的时候和mmseg4j有关。于是就考虑单例了，想法就是Tomcat初始化时我new一下mmseg4j，之后就不在new了，如果 mmseg4j 只是在每次构造的时候加载词典的话，那么应该就没问题了，于是就着手把mmseg4j分词器改成单例模式。</p>
-<h2 id="单例模式之路"><a href="#单例模式之路" class="headerlink" title="单例模式之路"></a>单例模式之路</h2><p>首先做如下单例定义：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SingleAnalyzer</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SingletonHolder</span> </span></div><div class="line">	&#123;</div><div class="line">		<span class="keyword">static</span> String dicFilePath=PathKit.getWebRootPath()+File.separator+<span class="string">"_dicdata"</span>+File.separator;;</div><div class="line">		<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Analyzer INSTANCE = <span class="keyword">new</span> ComplexAnalyzer(dicFilePath);  </div><div class="line">	&#125;  </div><div class="line"> </div><div class="line">	<span class="function"><span class="keyword">private</span> <span class="title">SingleAnalyzer</span> <span class="params">()</span></span>&#123;&#125;  </div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Analyzer <span class="title">getInstance</span><span class="params">()</span> </span>&#123;  </div><div class="line">	    <span class="keyword">return</span> SingletonHolder.INSTANCE;  </div><div class="line">	&#125;  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>然后在tomcat生命周期的对象里增加如下定义：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> Analyzer singleAnalyzer=SingleAnalyzer.getInstance();</div></pre></td></tr></table></figure>
-<p>然后在使用时就不要new Analyzer了，直接通过长生命周期的类去调用就行了。</p>
-<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>目前对单例还不是很熟，现在上线测试了几个小时了，还没发现问题。</p>
+        <h3 id="写在前面："><a href="#写在前面：" class="headerlink" title="写在前面："></a>写在前面：</h3><ol>
+<li><strong>为什么选择开发过程中的 CI 4 作为源码解读版本</strong>：（1）首先我选 CI 是因为它之前的稳定版都是相对比较轻量小巧的，而且可以认为是简单的。（2）为什么没有选择目前稳定的 3.x 版是因为我个人认为这个版本因为历史包袱原因确实在理念方面有些老了，用它没问题，但是学习它就不值得了。（3）选一个开发还没有稳定版的原因：既然仅仅是学习，即使的不稳定版应该也不会耽误我们去了解它，还有就是据说 CI 4 为了追赶潮流，用了很多的新特性，甚至直接提示 PHP 必须是7以上了。</li>
+<li><strong>写本文的目的</strong>：学习为主，同时把心得分享给大家。</li>
+<li><strong>CI 4 发布了正式版后如何</strong>：我会经常关注 CI 4 的进展，如果正式版发布了，并且架构没有太大变动，我会更新本文。</li>
+<li><strong>版权声明</strong>：可转载，但不论任何媒体都需要在转载前与本人沟通（imustgxd*sina&amp;cn），并在转载时注明出处。</li>
+<li><strong>错误声明</strong>：本人水平有限，该系列文章中可能会出现低级错误甚至“南辕北辙”的情况发生，请用中肯非激进的语言指正。</li>
+<li><strong>笔记时间</strong>：2017年4月。</li>
+</ol>
+<p>P.S. 有一本书叫做《PHP 6 高级编程》，然后 PHP 跳过了，希望 CI 别跳过 4 ，不过无所谓啦，毕竟只是读一下源码而已。</p>
+<p>下面进入正文：</p>
+<h3 id="CI-4-的下载和基本部署"><a href="#CI-4-的下载和基本部署" class="headerlink" title="CI 4 的下载和基本部署"></a>CI 4 的下载和基本部署</h3><p>CI 4 开发版是在 github (<a href="https://github.com/bcit-ci/CodeIgniter4" target="_blank" rel="external">https://github.com/bcit-ci/CodeIgniter4</a>) 上下载的，直接点击 clone or download 下载 zip 包。</p>
+<p>目前 CI 4 的文档还没有定稿，不过可以作为参考，网址是：<a href="https://bcit-ci.github.io/CodeIgniter4/" target="_blank" rel="external">https://bcit-ci.github.io/CodeIgniter4/</a></p>
+<p>参考文档中的提示，我们把 CI 的zip包解压，并且网站根目录指向 public 文件夹。CI 4 参考了 Laravel 、 YII2 等流行框架的做法，不在将所有的源码都扔进 web 服务器的可访问目录，这样做会更安全些。举个简单例子，经常有黑客会找上传漏洞，然后把未经许可的文件上传到 web 目录，如果上传的是个 php 文件，同时又在里边加了一些高权限的代码，后果不堪设想，而如果是这种模式，那么就可以把 public 目录在发布时设置成只读模式，甚至设置成只执行 index.php 这一个脚本，那么就会安全多了。部署好后，我们访问 <a href="http://localhost" target="_blank" rel="external">http://localhost</a> 如果看到了大大的 Welcome to CodeIgniter ，说明已经部署成功。</p>
+<h3 id="CI-4-源码目录"><a href="#CI-4-源码目录" class="headerlink" title="CI 4 源码目录"></a>CI 4 源码目录</h3><p>既然已经基本部署完毕，那么先来预览一下目录结构吧：</p>
+<p><img src="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/F7E5F9C7D61542F981438E716C019998/6823" alt="源码目录"></p>
+<p>可以看到依旧是我们熟悉的 CI 味道。</p>
+<h4 id="application"><a href="#application" class="headerlink" title="application"></a>application</h4><p><strong>application</strong> 是存储我们应用源码的位置。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">/application</div><div class="line">        /Config         存储配置信息</div><div class="line">        /Controllers    控制器存储位置</div><div class="line">        /Helpers        存储自定义的辅助函数</div><div class="line">        /Language       自定义的语言文件</div><div class="line">        /Libraries      自定义的类库</div><div class="line">        /Models         数据库模型以及业务逻辑</div><div class="line">        /Views          视图文件</div></pre></td></tr></table></figure>
+<h4 id="public"><a href="#public" class="headerlink" title="public"></a>public</h4><p><strong>public</strong> 是 web 服务器要指向的位置，另一些 CSS 以及图片等资源文件也可以保存到这里。里面已经包含了 .htaccess 文件，默认就已经将 URL 路径中的 index.php 去掉了，同时已经处理好了 CSS , 图片 ， html 等一些静态资源，确保能直接访问。</p>
+<h4 id="system"><a href="#system" class="headerlink" title="system"></a>system</h4><p><strong>system</strong> 是 CI 核心源码存放位置，我们需要解读的大部分源码都在这里。</p>
+<p>CI 的各个核心模块以模块名为目录名分别存储在这个目录下。在后续的章节会根据需要介绍到一部分。</p>
+<p>其中 bootstrap.php ， CodeIgniter.php 是 CI 执行流程过程中用到的核心文件。</p>
+<p>bootstrap.php 会被 public 下的 index.php 调用，形象点说， index.php 是程序入口，就像是 PC 的开机键，bootstrap.php 就像是 BIOS 只负责基本程序的加载检测以及准备过程，如自动加载等，CodeIgniter.php 更像是 PC 的 OS ，所有的模块包括控制器、这种类库就像是应用软件一样被 CodeIgniter.php 调用并加载。</p>
+<p>先扔一张所谓的结构图，供启发一下思路，注意，不是流程图。</p>
+<p><img src="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/1451F2CCC573468386A903CD1FA81D28/6932" alt="结构图"></p>
+<h4 id="test"><a href="#test" class="headerlink" title="test"></a>test</h4><p>此目录是写测试用例的地方，里边有个readme.md 文件，可以参考此文件部署以及书写测试用例。</p>
+<h4 id="writable"><a href="#writable" class="headerlink" title="writable"></a>writable</h4><p>顾名思义，是可写的文件夹，里边存 CI 的缓存文件、日志文件、以及上传文件。与源码关系不大，现在不多说，等需要时再聊聊。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>本篇文章算是一个开头，总体预览一下 CI 的基本结构。下一篇文章会涉及到 index.php 和 bootstrap.php 。</p>
+<hr>
+<blockquote>
+<p>此文可以转载，但转载前需要发邮件到imustgxd*sina.cn进行沟通，未沟通的均视作侵权。<br><a href="http://sheldong.space/2017/05/05/codeigniter-4-reader-01-introduction-preview">http://sheldong.space/2017/05/05/codeigniter-4-reader-01-introduction-preview</a></p>
+</blockquote>
+<hr>
+<p><strong>如有错误或者不明白的地方，请在下方评论，我会尽快回复并及时更新教程，感谢！</strong></p>
 
       
     </div>
@@ -343,18 +389,24 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/Codeigniter/" rel="tag">#Codeigniter</a>
+          
+        </div>
+      
 
       
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2016/10/25/laravel-start-0-start/" rel="next" title="laravel start 第0节 start">
+                <i class="fa fa-chevron-left"></i> laravel start 第0节 start
+              </a>
+            
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/10/20/apache-mime-mime-magic/" rel="prev" title="关于Apache MIME和MIME_Magic模块">
-                关于Apache MIME和MIME_Magic模块 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -403,8 +455,8 @@
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/10/20/singleton-pattern-mmseg4j-high-concurrency-memory-overflow/"
-           data-title="使用单例模式解决mmseg4j在高并发时导致内存溢出问题" data-url="http://sheldong.space/2016/10/20/singleton-pattern-mmseg4j-high-concurrency-memory-overflow/">
+      <div class="ds-thread" data-thread-key="2017/05/05/codeigniter-4-reader-01-introduction-preview/"
+           data-title="Codeigniter 4.0-dev 版源码学习笔记之一——前言以及 CI 4 预览" data-url="http://sheldong.space/2017/05/05/codeigniter-4-reader-01-introduction-preview/">
       </div>
     
   </div>
@@ -495,7 +547,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#之前的项目"><span class="nav-number">1.</span> <span class="nav-text">之前的项目</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#新搜索的构架"><span class="nav-number">2.</span> <span class="nav-text">新搜索的构架</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#部署以及遇到的问题"><span class="nav-number">3.</span> <span class="nav-text">部署以及遇到的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单例模式之路"><span class="nav-number">4.</span> <span class="nav-text">单例模式之路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#写在最后"><span class="nav-number">5.</span> <span class="nav-text">写在最后</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#写在前面："><span class="nav-number">1.</span> <span class="nav-text">写在前面：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CI-4-的下载和基本部署"><span class="nav-number">2.</span> <span class="nav-text">CI 4 的下载和基本部署</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CI-4-源码目录"><span class="nav-number">3.</span> <span class="nav-text">CI 4 源码目录</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#application"><span class="nav-number">3.1.</span> <span class="nav-text">application</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#public"><span class="nav-number">3.2.</span> <span class="nav-text">public</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#system"><span class="nav-number">3.3.</span> <span class="nav-text">system</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#test"><span class="nav-number">3.4.</span> <span class="nav-text">test</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#writable"><span class="nav-number">3.5.</span> <span class="nav-text">writable</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
             
           </div>
         </section>
