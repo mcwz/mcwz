@@ -86,15 +86,15 @@
 
 <meta name="description" content="我个人觉得在当前 MVC 流行的架构下，要想去了解一个框架，或者是一个基于此架构下的应用程序，最好的入手方式就是先看路由，虽然路由不是 MVC 里的任何一个，但是知道了路由的来龙去脉就知道了整个框架或者是应用的结构。从一个请求开始，具体分配到哪个 C 去执行的， C 里又调用了哪些东西，整个脉络也就清晰了。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Codeigniter 4.0-dev 版源码学习笔记之三——核心文件 Codeigniter.php">
+<meta property="og:title" content="Codeigniter 4.0-dev 版源码学习笔记之四——详细路由过程">
 <meta property="og:url" content="http://sheldong.space/2017/05/13/codeigniter-4-reader-04-route/index.html">
 <meta property="og:site_name" content="飞翔猴子">
 <meta property="og:description" content="我个人觉得在当前 MVC 流行的架构下，要想去了解一个框架，或者是一个基于此架构下的应用程序，最好的入手方式就是先看路由，虽然路由不是 MVC 里的任何一个，但是知道了路由的来龙去脉就知道了整个框架或者是应用的结构。从一个请求开始，具体分配到哪个 C 去执行的， C 里又调用了哪些东西，整个脉络也就清晰了。">
 <meta property="og:image" content="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/204B4EC7054F4B5484307EFB553D72F1/7716">
 <meta property="og:image" content="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/AED34CCE2E4C487289AAB6447DA29197/7764">
-<meta property="og:updated_time" content="2017-05-17T08:31:14.606Z">
+<meta property="og:updated_time" content="2017-05-17T08:38:14.233Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Codeigniter 4.0-dev 版源码学习笔记之三——核心文件 Codeigniter.php">
+<meta name="twitter:title" content="Codeigniter 4.0-dev 版源码学习笔记之四——详细路由过程">
 <meta name="twitter:description" content="我个人觉得在当前 MVC 流行的架构下，要想去了解一个框架，或者是一个基于此架构下的应用程序，最好的入手方式就是先看路由，虽然路由不是 MVC 里的任何一个，但是知道了路由的来龙去脉就知道了整个框架或者是应用的结构。从一个请求开始，具体分配到哪个 C 去执行的， C 里又调用了哪些东西，整个脉络也就清晰了。">
 <meta name="twitter:image" content="http://note.youdao.com/yws/public/resource/1460bfbd2d0465200e78ababb63e1b50/xmlnote/204B4EC7054F4B5484307EFB553D72F1/7716">
 
@@ -120,7 +120,7 @@
   <link rel="canonical" href="http://sheldong.space/2017/05/13/codeigniter-4-reader-04-route/"/>
 
 
-  <title> Codeigniter 4.0-dev 版源码学习笔记之三——核心文件 Codeigniter.php | 飞翔猴子 </title>
+  <title> Codeigniter 4.0-dev 版源码学习笔记之四——详细路由过程 | 飞翔猴子 </title>
 </head>
 
 <body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
@@ -260,7 +260,7 @@
             
             
               
-                Codeigniter 4.0-dev 版源码学习笔记之三——核心文件 Codeigniter.php
+                Codeigniter 4.0-dev 版源码学习笔记之四——详细路由过程
               
             
           </h1>
@@ -313,7 +313,7 @@
 
           
           
-             <span id="/2017/05/13/codeigniter-4-reader-04-route/" class="leancloud_visitors" data-flag-title="Codeigniter 4.0-dev 版源码学习笔记之三——核心文件 Codeigniter.php">
+             <span id="/2017/05/13/codeigniter-4-reader-04-route/" class="leancloud_visitors" data-flag-title="Codeigniter 4.0-dev 版源码学习笔记之四——详细路由过程">
                &nbsp; | &nbsp;
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -367,7 +367,7 @@
 <p>下一章应该会看看 CI 4 相对 CI 3 的变化。</p>
 <hr>
 <blockquote>
-<p>此文可以转载，但转载前需要发邮件到imustgxd*sina.cn进行沟通，未沟通的均视作侵权。<br><a href="http://sheldong.space/2017/05/05/codeigniter-4-reader-04-route">http://sheldong.space/2017/05/05/codeigniter-4-reader-04-route</a></p>
+<p>此文可以转载，但转载前需要发邮件到imustgxd*sina.cn进行沟通，未沟通的均视作侵权。<br><a href="http://sheldong.space/2017/05/13/codeigniter-4-reader-04-route">http://sheldong.space/2017/05/13/codeigniter-4-reader-04-route</a></p>
 </blockquote>
 <hr>
 <p><strong>如有错误或者不明白的地方，请在下方评论，我会尽快回复并及时更新教程，感谢！</strong></p>
@@ -402,8 +402,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/05/08/codeigniter-4-reader-03-core-codeigniter-php/" rel="next" title="Codeigniter 4.0-dev 版源码学习笔记之四——详细路由过程">
-                <i class="fa fa-chevron-left"></i> Codeigniter 4.0-dev 版源码学习笔记之四——详细路由过程
+              <a href="/2017/05/08/codeigniter-4-reader-03-core-codeigniter-php/" rel="next" title="Codeigniter 4.0-dev 版源码学习笔记之三——核心文件 Codeigniter.php">
+                <i class="fa fa-chevron-left"></i> Codeigniter 4.0-dev 版源码学习笔记之三——核心文件 Codeigniter.php
               </a>
             
           </div>
@@ -458,7 +458,7 @@
   <div class="comments" id="comments">
     
       <div class="ds-thread" data-thread-key="2017/05/13/codeigniter-4-reader-04-route/"
-           data-title="Codeigniter 4.0-dev 版源码学习笔记之三——核心文件 Codeigniter.php" data-url="http://sheldong.space/2017/05/13/codeigniter-4-reader-04-route/">
+           data-title="Codeigniter 4.0-dev 版源码学习笔记之四——详细路由过程" data-url="http://sheldong.space/2017/05/13/codeigniter-4-reader-04-route/">
       </div>
     
   </div>
